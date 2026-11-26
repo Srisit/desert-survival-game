@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission: Survive the Desert - ภารกิจเอาชีวิตรอดกลางทะเลทราย</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tone.js for synthesized UI sound effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <!-- Google Fonts: Prompt for crisp, modern Thai typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* Base Theme & Typography (STOU Green & Gold) */
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: linear-gradient(180deg, #04150e 0%, #09261a 45%, #0f3b28 85%, #164e34 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar for STOU green-gold theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(4, 24, 16, 0.55);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(234, 179, 8, 0.5);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(250, 204, 21, 0.85);
+        }
+
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: rgba(8, 30, 21, 0.86);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(234, 179, 8, 0.28);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.48);
+        }
+
+        .item-card {
+            background: rgba(12, 44, 31, 0.82);
+            border: 1.5px solid rgba(234, 179, 8, 0.14);
+            transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .item-card:hover:not(.disabled-card) {
+            transform: translateY(-2px);
+            border-color: rgba(250, 204, 21, 0.7);
+            background: rgba(17, 58, 41, 0.94);
+            box-shadow: 0 6px 20px rgba(234, 179, 8, 0.16);
+        }
+        .item-card.selected-card {
+            background: rgba(234, 179, 8, 0.16);
+            border-color: #facc15;
+            box-shadow: 0 0 16px rgba(250, 204, 21, 0.25);
+        }
+
+        /* Tactile Game Buttons */
+        .btn-desert {
+            background: linear-gradient(135deg, #eab308 0%, #b45309 100%);
+            box-shadow: 0 4px 15px rgba(202, 138, 4, 0.45), inset 0 1px 0 rgba(254, 249, 195, 0.35);
+            transition: all 0.2s ease;
+        }
+        .btn-desert:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(234, 179, 8, 0.65), inset 0 1px 0 rgba(254, 249, 195, 0.45);
+            filter: brightness(1.08);
+        }
+        .btn-desert:active {
+            transform: translateY(1px);
+        }
+
+        /* Tab Buttons */
+        .tab-btn {
+            background: rgba(10, 36, 25, 0.88);
+            border: 1px solid rgba(234, 179, 8, 0.18);
+            transition: all 0.2s ease;
+        }
+        .tab-btn:hover {
+            border-color: rgba(250, 204, 21, 0.6);
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #ca8a04 0%, #a16207 100%);
+            border-color: #fef08a;
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(234, 179, 8, 0.45);
+        }
+
+        /* Custom Scrollbar for dark desert theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(245, 158, 11, 0.45);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(245, 158, 11, 0.8);
+        }
+
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: rgba(24, 26, 38, 0.84);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(251, 191, 36, 0.16);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+        }
+
+        .item-card {
+            background: rgba(32, 36, 52, 0.78);
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .item-card:hover:not(.disabled-card) {
+            transform: translateY(-2px);
+            border-color: rgba(245, 158, 11, 0.55);
+            background: rgba(42, 46, 66, 0.92);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.14);
+        }
+        .item-card.selected-card {
+            background: rgba(234, 88, 12, 0.18);
+            border-color: #f97316;
+            box-shadow: 0 0 16px rgba(249, 115, 22, 0.25);
+        }
+
+        /* Tactile Game Buttons */
+        .btn-desert {
+            background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            transition: all 0.2s ease;
+        }
+        .btn-desert:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(234, 88, 12, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+            filter: brightness(1.06);
+        }
+        .btn-desert:active {
+            transform: translateY(1px);
+        }
+
+        /* Tab Buttons */
+        .tab-btn {
+            background: rgba(30, 34, 48, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+        .tab-btn:hover {
+            border-color: rgba(249, 115, 22, 0.5);
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border-color: #fdba74;
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(249, 115, 22, 0.45);
+        }
+
+        /* Subtle Animations */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+        .animate-shake {
+            animation: shake 0.38s ease-in-out;
+        }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        .animate-float {
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.35s ease-out forwards;
+        }
+
+        /* Desert Dunes Fixed Background Layer */
+        .dunes-bg {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 220px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.42;
+        }
+    </style>
+</head>
+<body class="relative selection:bg-yellow-500 selection:text-emerald-950">
+
+    <!-- Decorative Desert Dunes & Sun Background SVG -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <!-- Gold & Emerald Ambience Glow -->
+        <div class="absolute top-[-120px] right-[-80px] w-96 h-96 rounded-full bg-yellow-500/15 blur-3xl"></div>
+        <div class="absolute bottom-10 left-[-100px] w-80 h-80 rounded-full bg-emerald-400/15 blur-3xl"></div>
+        <!-- Sand Dunes Silhouette (STOU Green) -->
+        <svg class="dunes-bg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path fill="#14532d" fill-opacity="0.65" d="M0,224L80,213.3C160,203,320,181,480,192C640,203,800,245,960,240C1120,235,1280,181,1360,154.7L1440,128L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path>
+            <path fill="#052e16" fill-opacity="0.9" d="M0,288L60,277.3C120,267,240,245,360,245.3C480,245,600,267,720,261.3C840,256,960,224,1080,218.7C1200,213,1320,235,1380,245.3L1440,256L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
+        </svg>
+    </div>
+
+    <!-- Custom Toast Notification (No alert() used) -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
+
+    <!-- Main App Wrapper -->
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-5 sm:py-7">
+
+        <!-- ========================================================= -->
+        <!-- SCREEN 1: MISSION BRIEFING (INTRO SCREEN)                 -->
+        <!-- ========================================================= -->
+        <section id="screen-intro" class="min-h-[82vh] flex items-center justify-center animate-fade-in">
+            <div class="glass-panel rounded-3xl p-6 sm:p-10 max-w-3xl w-full border border-yellow-500/35 relative overflow-hidden">
+                <!-- Decorative Top Accent -->
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-500 via-yellow-400 to-emerald-500"></div>
+
+                <div class="flex flex-col items-center text-center mb-8">
+                    <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-600/30 to-yellow-500/25 border border-yellow-400/45 flex items-center justify-center text-5xl mb-4 animate-float shadow-lg">
+                        🏜️
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-yellow-500/15 text-yellow-300 border border-yellow-400/40 mb-3">
+                        Interactive Survival &amp; Decision Game • มสธ.
+                    </span>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-emerald-300 mb-3">
+                        ภารกิจหลงทะเลทราย
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base max-w-2xl leading-relaxed">
+                        เครื่องบินเล็กของคุณประสบเหตุตกกลางทะเลทรายซาฮารา ห่างจากชุมชนที่ใกล้ที่สุดกว่า 120 กิโลเมตร 
+                        อุณหภูมิกลางวันร้อนจัด 45°C และกลางคืนหนาวเหน็บ 5°C คุณมีเวลาจำกัดก่อนเครื่องบินจะระเบิด 
+                        จงเลือกสิ่งของใส่กระเป๋าเป้อย่างชาญฉลาดเพื่อเอาชีวิตรอด!
+                    </p>
+                </div>
+
+                <!-- Mission Rules Box -->
+                <div class="bg-emerald-950/60 rounded-2xl p-5 sm:p-6 border border-emerald-700/50 mb-8">
+                    <div class="flex items-center gap-2 text-lg font-bold text-amber-300 mb-4">
+                        <span>📋</span>
+                        <h2>กติกาภารกิจ</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="flex items-start gap-4 border-l-4 border-amber-500 pl-4">
+                            <div class="text-3xl mt-0.5">⚖️</div>
+                            <div>
+                                <h3 class="font-bold text-amber-400 text-base">น้ำหนักจำกัด 50 หน่วย</h3>
+                                <p class="text-slate-300 text-sm mt-1">
+                                    กระเป๋าเป้เดินป่ารับน้ำหนักได้สูงสุด <strong class="text-white">50 หน่วย</strong> เท่านั้น หากหนักเกินไปจะไม่สามารถเดินฝ่าทะเลทรายได้
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 border-l-4 border-emerald-500 pl-4">
+                            <div class="text-3xl mt-0.5">🎯</div>
+                            <div>
+                                <h3 class="font-bold text-emerald-400 text-base">เลือกอย่างชาญฉลาด &amp; เรียนรู้</h3>
+                                <p class="text-slate-300 text-sm mt-1">
+                                    สิ่งของบางชิ้นคือ <strong class="text-emerald-300">ตัวช่วยชีวิต</strong> บางชิ้นคือ <strong class="text-rose-400">กับดัก</strong> 
+                                    เมื่อจบเกมจะมีบทวิเคราะห์และคำสอนแทรกความรู้ให้ครบถ้วน
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Start Button -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <button id="btn-start-game" class="btn-desert w-full sm:w-auto px-10 py-4 rounded-2xl text-white font-bold text-lg flex items-center justify-center gap-3 cursor-pointer">
+                        <span>🎒</span>
+                        <span>เริ่มจัดกระเป๋าเอาตัวรอด</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- SCREEN 2: MAIN PACKING GAMEPLAY                           -->
+        <!-- ========================================================= -->
+        <section id="screen-game" class="hidden animate-fade-in">
+            <!-- Top Header Bar -->
+            <header class="glass-panel rounded-2xl p-4 sm:p-5 mb-5 flex flex-col gap-4">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-yellow-500/20 border border-yellow-400/45 flex items-center justify-center text-2xl">
+                            🏜️
+                        </div>
+                        <div>
+                            <h1 class="text-lg sm:text-xl font-bold text-white leading-tight">
+                                Mission: Survive the Desert
+                            </h1>
+                            <p class="text-xs sm:text-sm text-yellow-300/90">ภารกิจจัดกระเป๋าเอาชีวิตรอดกลางทะเลทราย</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button id="btn-sound-toggle" title="เปิด/ปิดเสียงเอฟเฟกต์" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-600/60 text-sm text-slate-200 transition cursor-pointer flex items-center gap-1.5">
+                            <span id="sound-icon">🔊</span>
+                            <span class="hidden sm:inline">เสียง</span>
+                        </button>
+                        <button id="btn-reset-pack" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-rose-900/50 border border-slate-600/60 hover:border-rose-500/50 text-sm text-slate-200 transition cursor-pointer flex items-center gap-1.5">
+                            <span>🔄</span>
+                            <span>ล้างกระเป๋า</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Weight Progress Bar -->
+                <div id="weight-bar-wrapper" class="bg-emerald-950/75 rounded-xl p-3.5 border border-emerald-700/60">
+                    <div class="flex items-center justify-between text-sm mb-2">
+                        <span class="font-semibold text-slate-200 flex items-center gap-2">
+                            <span>⚖️ น้ำหนักบรรทุกในกระเป๋าเป้</span>
+                            <span id="weight-status-badge" class="text-xs px-2 py-0.5 rounded-full bg-emerald-900 text-emerald-200">ยังว่างอยู่</span>
+                        </span>
+                        <div class="font-bold text-base sm:text-lg">
+                            <span id="current-weight-text" class="text-yellow-400">0</span>
+                            <span class="text-slate-400 text-sm"> / 50 หน่วย</span>
+                        </div>
+                    </div>
+                    <div class="w-full h-3.5 bg-emerald-950 rounded-full overflow-hidden border border-emerald-700/70">
+                        <div id="weight-progress-fill" class="h-full bg-gradient-to-r from-emerald-400 via-yellow-400 to-amber-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Two-Column Workspace -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+                <!-- LEFT COLUMN: ITEM CATALOG (7 cols on lg) -->
+                <div class="lg:col-span-7 glass-panel rounded-2xl p-4 sm:p-5">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-yellow-500/30">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span>📦</span>
+                            <span>รายการสิ่งของที่กู้ได้จากซากเครื่องบิน</span>
+                        </h2>
+                        <span class="text-xs text-slate-400">คลิกเพื่อหยิบ / เอาออก</span>
+                    </div>
+
+                    <!-- Category Tabs -->
+                    <div id="category-tabs" class="flex flex-wrap gap-2 mb-5">
+                        <!-- Dynamically rendered tabs -->
+                    </div>
+
+                    <!-- Items Grid -->
+                    <div id="items-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[540px] overflow-y-auto pr-1">
+                        <!-- Dynamically rendered item cards -->
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: SURVIVAL BACKPACK VISUAL (5 cols on lg) -->
+                <div class="lg:col-span-5 glass-panel rounded-2xl p-4 sm:p-5 flex flex-col">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-yellow-500/30">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span>🎒</span>
+                            <span>กระเป๋าเป้เอาชีวิตรอด</span>
+                        </h2>
+                        <span id="pack-count-badge" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-400/35">
+                            0 ชิ้น
+                        </span>
+                    </div>
+
+                    <!-- Backpack Silhouette Visual Container -->
+                    <div class="relative rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950/95 border-2 border-dashed border-amber-500/30 p-4 min-h-[340px] max-h-[430px] overflow-y-auto flex flex-col">
+                        <!-- Empty State -->
+                        <div id="backpack-empty" class="m-auto text-center py-10 px-4">
+                            <!-- Custom SVG Backpack Icon -->
+                            <svg class="w-20 h-20 mx-auto mb-3 text-slate-600" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22 18V14C22 10.6863 24.6863 8 28 8H36C39.3137 8 42 10.6863 42 14V18" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+                                <rect x="14" y="18" width="36" height="38" rx="10" fill="currentColor" fill-opacity="0.2" stroke="currentColor" stroke-width="3"/>
+                                <rect x="20" y="34" width="24" height="14" rx="4" stroke="currentColor" stroke-width="2.5"/>
+                                <line x1="26" y1="26" x2="38" y2="26" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                            </svg>
+                            <p class="text-slate-300 font-semibold">กระเป๋าเป้ยังว่างเปล่า</p>
+                            <p class="text-xs text-slate-400 mt-1">คลิกเลือกสิ่งของจากรายการด้านซ้ายเพื่อบรรจุลงกระเป๋า</p>
+                        </div>
+
+                        <!-- Selected Items List -->
+                        <div id="backpack-list" class="hidden flex-col gap-2.5">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats & Submit Action -->
+                    <div class="mt-4 pt-4 border-t border-slate-700/70 flex flex-col gap-3">
+                        <div class="flex items-center justify-between text-sm bg-slate-900/60 px-4 py-2.5 rounded-xl border border-slate-700/50">
+                            <span class="text-slate-300">พื้นที่น้ำหนักคงเหลือ:</span>
+                            <span id="remaining-weight-text" class="font-bold text-emerald-400">50 หน่วย</span>
+                        </div>
+                        <button id="btn-submit-mission" class="btn-desert w-full py-3.5 rounded-xl text-white font-bold text-base sm:text-lg flex items-center justify-center gap-2 cursor-pointer">
+                            <span>🧭</span>
+                            <span>ออกเดินทางฝ่าทะเลทราย! (ส่งคำตอบ)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- SCREEN 3: RESULTS, ANALYSIS & EDUCATIONAL DEBRIEF         -->
+        <!-- ========================================================= -->
+        <section id="screen-result" class="hidden animate-fade-in">
+            <!-- Top Outcome Banner -->
+            <div id="result-banner" class="rounded-3xl p-6 sm:p-8 mb-5 border-2 text-center relative overflow-hidden glass-panel">
+                <div class="relative z-10">
+                    <div id="result-emoji" class="text-5xl mb-3">🏆</div>
+                    <h1 id="result-title" class="text-2xl sm:text-4xl font-extrabold mb-2">ตำนานผู้พิชิตทะเลทราย!</h1>
+                    <p id="result-subtitle" class="text-slate-200 text-sm sm:text-base max-w-3xl mx-auto leading-relaxed"></p>
+                </div>
+            </div>
+
+            <!-- Score & Weight KPI Row -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                <!-- Total Weight Card -->
+                <div class="glass-panel rounded-2xl p-5">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl">⚖️</div>
+                        <div>
+                            <div class="text-xs text-slate-400">น้ำหนักรวมที่ใช้</div>
+                            <div class="text-2xl font-extrabold text-amber-400">
+                                <span id="res-weight-val">0</span> <span class="text-base font-normal text-slate-400">/ 50 หน่วย</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
+                        <div id="res-weight-bar" class="h-full bg-amber-400 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Survival Score Card -->
+                <div class="glass-panel rounded-2xl p-5">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl">💚</div>
+                            <div>
+                                <div class="text-xs text-slate-400">คะแนนการเอาชีวิตรอดของคุณ</div>
+                                <div class="text-2xl font-extrabold text-emerald-400">
+                                    <span id="res-score-val">0</span>
+                                    <span class="text-sm font-medium text-slate-400 ml-1">/ สูงสุดที่เป็นไปได้ <span id="res-optimal-val" class="text-amber-300 font-bold">0</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="res-percent-badge" class="px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold text-sm">
+                            100%
+                        </div>
+                    </div>
+                    <div id="res-score-note" class="text-xs text-slate-300 mt-3"></div>
+                </div>
+            </div>
+
+            <!-- Main Debrief Grid: Left (Analysis & Lessons) | Right (Item Breakdown & Optimal Key) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+                <!-- LEFT: ANALYSIS & EMBEDDED TEACHINGS (5 cols) -->
+                <div class="lg:col-span-5 flex flex-col gap-5">
+                    <!-- Dynamic Personal Analysis -->
+                    <div class="glass-panel rounded-2xl p-5">
+                        <h2 class="text-lg font-bold text-amber-300 flex items-center gap-2 mb-3">
+                            <span>💡</span>
+                            <span>การวิเคราะห์การตัดสินใจของคุณ</span>
+                        </h2>
+                        <div id="res-analysis-text" class="text-sm text-slate-200 leading-relaxed space-y-2.5 bg-slate-900/60 p-4 rounded-xl border border-slate-700/60">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Embedded Survival & Life Teachings -->
+                    <div class="glass-panel rounded-2xl p-5 border border-emerald-500/25">
+                        <h2 class="text-lg font-bold text-emerald-300 flex items-center gap-2 mb-3">
+                            <span>📚</span>
+                            <span>คำสอนและเกร็ดความรู้แทรกบทเรียน</span>
+                        </h2>
+
+                        <div class="space-y-3 text-sm">
+                            <!-- Lesson 1: Rule of 3 -->
+                            <div class="bg-slate-900/65 p-3.5 rounded-xl border-l-4 border-sky-400">
+                                <h3 class="font-bold text-sky-300 mb-1">1. กฎแห่งเลข 3 ในการเอาตัวรอด (Rule of Threes)</h3>
+                                <p class="text-slate-300 leading-relaxed">
+                                    มนุษย์อยู่ได้ <strong>3 นาที</strong>โดยไม่หายใจ, <strong>3 ชั่วโมง</strong>ในสภาพอากาศสุดขั้ว (ร้อนจัด/หนาวจัด), 
+                                    <strong>3 วัน</strong>โดยไม่ดื่มน้ำ และ <strong>3 สัปดาห์</strong>โดยไม่กินอาหาร ดังนั้นในทะเลทราย 
+                                    <span class="text-amber-300">การกันแดด-กันหนาว การส่งสัญญาณขอความช่วยเหลือ และน้ำดื่ม</span> จึงสำคัญกว่าอาหารหรืออาวุธ!
+                                </p>
+                            </div>
+
+                            <!-- Lesson 2: Signal vs Wander -->
+                            <div class="bg-slate-900/65 p-3.5 rounded-xl border-l-4 border-amber-400">
+                                <h3 class="font-bold text-amber-300 mb-1">2. ทำไม "กระจกเงา" ถึงชนะ "ปืน" และ "ทองคำ"?</h3>
+                                <p class="text-slate-300 leading-relaxed">
+                                    ตามหลักสูตรเอาตัวรอดของ NASA สิ่งสำคัญที่สุดเมื่อเครื่องบินตกคือ <strong>การทำให้ทีมกู้ภัยมองเห็น</strong> 
+                                    กระจกเงาหนักเพียง 1 หน่วย แต่สะท้อนแสงแดดได้ไกลกว่า 15 กิโลเมตร ในขณะที่ปืนและทองคำมีน้ำหนักมากและไม่ช่วยให้รอดพ้นจากภาวะขาดน้ำ
+                                </p>
+                            </div>
+
+                            <!-- Lesson 3: Life & Knapsack Philosophy -->
+                            <div class="bg-slate-900/65 p-3.5 rounded-xl border-l-4 border-emerald-400">
+                                <h3 class="font-bold text-emerald-300 mb-1">3. ข้อคิดชีวิตจากโจทย์กระเป๋าเป้ (Knapsack Mindset)</h3>
+                                <p class="text-slate-300 leading-relaxed">
+                                    ชีวิตคนเรามี <strong>"เวลาและพลังงานจำกัด"</strong> เหมือนกระเป๋าที่รับน้ำหนักได้แค่ 50 หน่วย 
+                                    เราไม่สามารถแบกทุกอย่างที่ดูเหมือนจะดีไปด้วยได้ ความสำเร็จไม่ได้อยู่ที่การถือของชิ้นใหญ่ที่สุด 
+                                    แต่อยู่ที่การรู้จักตัด <em>"กับดักที่ดูหรูหราแต่ไร้ประโยชน์"</em> และเลือกสิ่งที่ <strong>คุ้มค่าต่อเป้าหมายชีวิตมากที่สุด</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: ITEM BREAKDOWN & OPTIMAL SOLUTION KEY (7 cols) -->
+                <div class="lg:col-span-7 glass-panel rounded-2xl p-5">
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-700/80">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span>🔍</span>
+                            <span>เจาะลึกเฉลยและเหตุผลรายชิ้น</span>
+                        </h2>
+
+                        <!-- Toggle between User's Selection vs Mathematical Optimal Solution -->
+                        <div class="flex bg-emerald-950/90 p-1 rounded-xl border border-emerald-700/70">
+                            <button id="tab-res-user" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-amber-600 text-white transition cursor-pointer">
+                                รายการที่คุณเลือก
+                            </button>
+                            <button id="tab-res-optimal" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition cursor-pointer">
+                                🏆 เฉลยชุดคะแนนสูงสุด
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Description for Active Tab -->
+                    <div id="res-list-caption" class="text-xs sm:text-sm text-slate-300 mb-3 bg-slate-900/50 px-3.5 py-2 rounded-lg border border-slate-800">
+                        แสดงสิ่งของทั้งหมดที่คุณเลือก พร้อมคำอธิบายข้อดี-ข้อเสียและคำสอนในแต่ละชิ้น
+                    </div>
+
+                    <!-- Detailed Items List -->
+                    <div id="res-items-list" class="space-y-3 max-h-[540px] overflow-y-auto pr-1">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Replay Actions -->
+            <div class="mt-7 flex flex-wrap items-center justify-center gap-4">
+                <button id="btn-play-again" class="btn-desert px-8 py-3.5 rounded-2xl text-white font-bold text-base sm:text-lg flex items-center gap-2 cursor-pointer">
+                    <span>🔄</span>
+                    <span>จัดกระเป๋าและลองเล่นใหม่อีกครั้ง</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- CREDIT FOOTER                                             -->
+        <!-- ========================================================= -->
+        <footer class="mt-8 pt-4 pb-2 text-center text-xs sm:text-sm text-slate-300/90">
+            <div class="glass-panel inline-block px-6 py-3.5 rounded-2xl border border-yellow-400/40 bg-emerald-950/85">
+                <p class="font-bold text-yellow-300">ผศ.ดร.ศรีสิทธิ์ เจียรบุตร</p>
+                <p class="text-emerald-100/90 mt-0.5">หลักสูตรเทคโนโลยีการจัดการทางวิศวกรรม สาขาวิชาวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยสุโขทัยธรรมาธิราช</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- GAME LOGIC & DATA (JAVASCRIPT)                            -->
+    <!-- ========================================================= -->
+    <script>
+        /**
+         * --------------------------------------------------------------------
+         * 1. GAME CONFIGURATION & EDUCATIONAL ITEM DATABASE
+         * --------------------------------------------------------------------
+         * Weight limit: 50 units
+         * Each item includes:
+         * - id, name, category, icon (emoji), weight, score
+         * - tagType: 'optimal' (คุ้มค่า ควรเลือก), 'heavy_good' (สำคัญมากแต่หนัก),
+         *            'moderate' (พอใช้ได้), 'trap' (กับดัก / ไม่คุ้มค่า)
+         * - lesson: Educational explanation / survival wisdom shown in debrief
+         */
+        const MAX_WEIGHT = 50;
+
+        const CATEGORIES = [
+            { id: 'water_food', name: 'น้ำและอาหาร', icon: '💧' },
+            { id: 'nav_signal', name: 'นำทาง/สัญญาณ', icon: '🧭' },
+            { id: 'shelter', name: 'ที่พัก/ป้องกัน', icon: '⛺' },
+            { id: 'medical_tools', name: 'การแพทย์/เครื่องมือ', icon: '🩺' },
+            { id: 'misc_traps', name: 'ของทั่วไป/กับดัก', icon: '🎒' }
+        ];
+
+        const ITEMS = [
+            // --- หมวด 1: น้ำและอาหาร ---
+            {
+                id: 'water_tank',
+                name: 'ถังน้ำดื่มสะอาด 10 ลิตร',
+                category: 'water_food',
+                icon: '🚰',
+                weight: 10,
+                score: 18,
+                tagType: 'heavy_good',
+                tagLabel: 'สำคัญมากแต่หนัก',
+                shortDesc: 'แหล่งน้ำหลักสำหรับประทังชีวิตหลายวัน',
+                lesson: 'น้ำคือหัวใจของการรอดชีวิตในทะเลทราย ร่างกายขาดน้ำได้ไม่เกิน 3 วัน แม้จะหนักถึง 10 หน่วย แต่ช่วยยืดชีวิตได้อย่างแท้จริง'
+            },
+            {
+                id: 'water_tabs',
+                name: 'เม็ดฟู่กรองน้ำสะอาด',
+                category: 'water_food',
+                icon: '💊',
+                weight: 2,
+                score: 6,
+                tagType: 'optimal',
+                tagLabel: 'คุ้มค่า ควรเลือก',
+                shortDesc: 'ฆ่าเชื้อโรคในน้ำขุ่นให้ดื่มได้ปลอดภัย',
+                lesson: 'น้ำหนักเบามากแต่คุ้มค่าสุดๆ! หากพบแหล่งน้ำธรรมชาติหรือโอเอซิสที่ไม่สะอาด เม็ดฟู่จะช่วยป้องกันอาการท้องเสียซึ่งทำให้ร่างกายเสียน้ำจนถึงชีวิตได้'
+            },
+            {
+                id: 'ors_powder',
+                name: 'ผงเกลือแร่ ORS (10 ซอง)',
+                category: 'water_food',
+                icon: '🧃',
+                weight: 2,
+                score: 5,
+                tagType: 'optimal',
+                tagLabel: 'คุ้มค่า ควรเลือก',
+                shortDesc: 'ชดเชยเกลือแร่ที่เสียไปกับเหงื่อ',
+                lesson: 'การดื่มแต่น้ำเปล่าเมื่อเหงื่อออกมากอาจทำให้ขาดโซเดียมและเป็นตะคริว ผงเกลือแร่ช่วยรักษาสมดุลร่างกายและป้องกันฮีทสโตรก'
+            },
+            {
+                id: 'energy_bars',
+                name: 'อาหารอัดแท่งพลังงานสูง',
+                category: 'water_food',
+                icon: '🍫',
+                weight: 4,
+                score: 7,
+                tagType: 'optimal',
+                tagLabel: 'คุ้มค่า ควรเลือก',
+                shortDesc: 'คาร์โบไฮเดรตเข้มข้น ย่อยง่ายไม่เปลืองน้ำ',
+                lesson: 'อาหารกลุ่มคาร์โบไฮเดรตใช้น้ำในการย่อยน้อยกว่าโปรตีน จึงเหมาะกับทะเลทรายมากที่สุด ช่วยให้มีแรงเดินและตั้งสติได้'
+            },
+            {
+                id: 'salty_jerky',
+                name: 'เนื้อแดดเดียวรสเค็มจัด',
+                category: 'water_food',
+                icon: '🥩',
+                weight: 5,
+                score: 2,
+                tagType: 'trap',
+                tagLabel: 'กับดัก / ไม่คุ้มค่า',
+                shortDesc: 'อาหารรสจัด เก็บได้นานแต่ทำให้คอแห้ง',
+                lesson: 'กับดักยอดฮิต! อาหารเค็มจัดและโปรตีนสูงจะดึงน้ำจากเซลล์ร่างกายไปใช้ในการย่อยและขับโซเดียม ทำให้คุณกระหายน้ำหนักกว่าเดิมเป็นสองเท่า'
+            },
+            {
+                id: 'vodka_bottle',
+                name: 'ขวดเหล้าวอดก้า 1 ลิตร',
+                category: 'water_food',
+                icon: '🍾',
+                weight: 4,
+                score: 1,
+                tagType: 'trap',
+                tagLabel: 'กับดัก / ไม่คุ้มค่า',
+                shortDesc: 'เครื่องดื่มแอลกอฮอล์ความเข้มข้นสูง',
+                lesson: 'กับดักอันตราย! ห้ามดื่มแอลกอฮอล์แก้กระหายเด็ดขาด เพราะมีฤทธิ์ขับปัสสาวะ ทำให้ร่างกายขาดน้ำเร็วขึ้นมาก แม้ใช้เช็ดแผลได้บ้างแต่ไม่คุ้มกับน้ำหนัก 4 หน่วย'
+            },
+
+            // --- หมวด 2: นำทางและสัญญาณ ---
+            {
+                id: 'signal_mirror',
+                name: 'กระจกเงาขนาดพกพา',
+                category: 'nav_signal',
+                icon: '🪞',
+                weight: 1,
+                score: 5,
+                tagType: 'optimal',
+                tagLabel: 'คุ้มค่า ควรเลือก',
+                shortDesc: 'สะท้อนแสงแดดส่งสัญญาณขอความช่วยเหลือ',
+                lesson: 'สุดยอดไอเทมอันดับ 1 ของหลักสูตร NASA! น้ำหนักแค่ 1 หน่วย แต่สะท้อนแสงแดดได้ไกลกว่า 15 กม. ช่วยให้เฮลิคอปเตอร์กู้ภัยเห็นคุณได้ทันที'
+            },
+            {
+                id: 'whistle',
+                name: 'นกหวีดสัญญาณฉุกเฉิน',
+                category: 'nav_signal',
+                icon: '📯',
+                weight: 1,
+                score: 4,
+                tagType: 'optimal',
+                tagLabel: 'คุ้มค่า ควรเลือก',
+                shortDesc: 'ส่งเสียงดังไกลโดยไม่ต้องตะโกน',
+                lesson: 'การตะโกนขอความช่วยเหลือทำให้คอแห้งและเสียน้ำเร็วมาก นกหวีดใช้แรงเป่าน้อยกว่าแต่ส่งเสียงได้ไกลกว่าเสียงคนถึง 3 เท่า'
+            },
+            {
+                id: 'signal_flare',
+                name: 'พลุแฟลร์ส่งสัญญาณ',
+                category: 'nav_signal',
+                icon: '🧨',
+                weight: 3,
+                score: 7,
+                tagType: 'optimal',
+                tagLabel: 'คุ้มค่า ควรเลือก',
+                shortDesc: 'ยิงแสงสีแดงสว่างจ้าในเวลากลางคืน',
+                lesson: 'เมื่อตกกลางคืนกระจกเงาจะใช้ไม่ได้ พลุแฟลร์คือตัวช่วยสำคัญที่ดึงดูดสายตาทีมค้นหาทางอากาศได้อย่างมีประสิทธิภาพ'
+            },
+            {
+                id: 'compass',
+                name: 'เข็มทิศแม่เหล็ก',
+                category: 'nav_signal',
+                icon: '🧭',
+                weight: 2,
+                score: 5,
+                tagType: 'optimal',
+                tagLabel: 'คุ้มค่า ควรเลือก',
+                shortDesc: 'ระบุทิศเหนือ-ใต้อย่างแม่นยำ',
+                lesson: 'กลางทะเลทรายที่ทุกด้านเป็นเนินทรายเหมือนกันหมด มนุษย์มักเดินวนเป็นวงกลมโดยไม่รู้ตัว เข็มทิศช่วยให้รักษาวงทิศทางได้แม่นยำ'
+            },
+            {
+                id: 'air_map',
+                name: 'แผนที่ทางอากาศฉบับใหญ่',
+                category: 'nav_signal',
+                icon: '🗺️',
+                weight: 4,
+                score: 4,
+                tagType: 'moderate',
+                tagLabel: 'พอใช้ได้',
+                shortDesc: 'แสดงภูมิประเทศทะเลทรายโดยรอบ',
+                lesson: 'มีประโยชน์เฉพาะเมื่อรู้ตำแหน่งตกที่แน่ชัด แต่บ่อยครั้งการอยู่ใกล้ซากเครื่องบินเพื่อรอทีมกู้ภัยปลอดภัยกว่าการเสี่ยงเดินไกลตามแผนที่'
+            },
+
+            // --- หมวด 3: ที่พักและป้องกัน ---
+            {
+                id: 'thermal_blanket',
+                name: 'ผ้าใบสะท้อนแสง (Emergency Blanket)',
+                category: 'shelter',
+                icon: '🛡️',
+                weight: 2,
+                score: 7,
+                tagType: 'optimal',
+                tagLabel: 'คุ้มค่า ควรเลือก',
+                shortDesc: 'กันแดดตอนกลางวัน ห่มกันหนาวตอนกลางคืน',
+                lesson: 'คุ้มค่ามาก! ทะเลทรายกลางวันร้อน 45°C กลางคืนลดฮวบเหลือ 5°C ผ้าใบนี้กางบังแดดลดความร้อนได้ และใช้ห่มรักษาอุณหภูมิร่างกายตอนกลางคืนได้ดีเยี่ยม'
+            },
+            {
+                id: 'long_sleeve',
+                name: 'เสื้อคลุมแขนยาวสีอ่อน + ผ้าโพกหัว',
+                category: 'shelter',
+                icon: '🧥',
+                weight: 3,
+                score: 8,
+                tagType: 'optimal',
+                tagLabel: 'คุ้มค่า ควรเลือก',
+                shortDesc: 'ปกป้องผิวจากแดดและลดการระเหยของเหงื่อ',
+                lesson: 'หลายคนเข้าใจผิดว่าอากาศร้อนควรถอดเสื้อ แต่ความจริงเสื้อแขนยาวสีอ่อนช่วยสะท้อนแดดและชะลอการเสียน้ำทางผิวหนังได้ถึง 30%!'
+            },
+            {
+                id: 'sunglasses',
+                name: 'แว่นกันแดดกันลมทราย',
+                category: 'shelter',
+                icon: '🕶️',
+                weight: 1,
+                score: 3,
+                tagType: 'optimal',
+                tagLabel: 'คุ้มค่า ควรเลือก',
+                shortDesc: 'กันแสงสะท้อนจากทรายและฝุ่นพายุ',
+                lesson: 'แสงแดดที่สะท้อนจากผืนทรายทำให้เกิดภาวะตาพร่าและปวดศีรษะรุนแรง แว่นกันแดดหนักแค่ 1 หน่วยแต่ช่วยถนอมดวงตาได้ดีมาก'
+            },
+            {
+                id: 'big_tent',
+                name: 'เต็นท์แคมป์ปิ้งขนาดใหญ่',
+                category: 'shelter',
+                icon: '⛺',
+                weight: 12,
+                score: 14,
+                tagType: 'heavy_good',
+                tagLabel: 'สำคัญมากแต่หนัก',
+                shortDesc: 'ที่พักกันแดดและพายุทรายอย่างดีเยี่ยม',
+                lesson: 'ให้ร่มเงาและกันลมได้ดีมาก แต่มีน้ำหนักถึง 12 หน่วย หากต้องแบกเดินจะทำให้เสียเหงื่อและพลังงานมากเกินไป ผ้าใบสะท้อนแสงจึงคล่องตัวกว่า'
+            },
+
+            // --- หมวด 4: การแพทย์และเครื่องมือ ---
+            {
+                id: 'swiss_knife',
+                name: 'มีดพับอเนกประสงค์',
+                category: 'medical_tools',
+                icon: '🔪',
+                weight: 2,
+                score: 6,
+                tagType: 'optimal',
+                tagLabel: 'คุ้มค่า ควรเลือก',
+                shortDesc: 'ตัดเชือก ทำที่บังแดด และงานช่างฉุกเฉิน',
+                lesson: 'เครื่องมือพื้นฐานที่ขาดไม่ได้ในทุกสถานการณ์เอาตัวรอด ช่วยดัดแปลงสิ่งของรอบตัวให้กลายเป็นที่พักหรืออุปกรณ์ส่งสัญญาณได้'
+            },
+            {
+                id: 'first_aid',
+                name: 'ชุดปฐมพยาบาลเบื้องต้น',
+                category: 'medical_tools',
+                icon: '🩹',
+                weight: 4,
+                score: 8,
+                tagType: 'optimal',
+                tagLabel: 'คุ้มค่า ควรเลือก',
+                shortDesc: 'ผ้าพันแผล ยาฆ่าเชื้อ และยาแก้ปวด',
+                lesson: 'แผลถลอกเล็กน้อยจากซากเครื่องบินสามารถติดเชื้อรุนแรงได้เมื่อโดนทรายและความร้อน ชุดทำแผลช่วยป้องกันภาวะแทรกซ้อนที่อันตราย'
+            },
+            {
+                id: 'solar_flashlight',
+                name: 'ไฟฉายพลังงานแสงอาทิตย์',
+                category: 'medical_tools',
+                icon: '🔦',
+                weight: 3,
+                score: 6,
+                tagType: 'optimal',
+                tagLabel: 'คุ้มค่า ควรเลือก',
+                shortDesc: 'ให้แสงสว่างยามค่ำคืน ชาร์จด้วยแสงแดด',
+                lesson: 'กลางคืนในทะเลทรายมืดสนิทและมีสัตว์มีพิษอย่างแมงป่องหรืองูออกหากิน ไฟฉายโซลาร์ช่วยส่องทางและใช้กะพริบส่งสัญญาณได้โดยไม่กลัวถ่านหมด'
+            },
+            {
+                id: 'paracord',
+                name: 'เชือกพาราคอร์ด 20 เมตร',
+                category: 'medical_tools',
+                icon: '🪢',
+                weight: 3,
+                score: 5,
+                tagType: 'moderate',
+                tagLabel: 'พอใช้ได้',
+                shortDesc: 'เชือกเหนียวพิเศษสำหรับผูกเพิงหรือมัดของ',
+                lesson: 'ใช้ผูกผ้าใบทำเพิงบังแดด มัดกระเป๋า หรือใช้ช่วยดึงกันในพื้นที่ลาดชัน เป็นอุปกรณ์เสริมที่มีประโยชน์หลากหลาย'
+            },
+
+            // --- หมวด 5: ของทั่วไป / กับดัก ---
+            {
+                id: 'pistol',
+                name: 'ปืนพกพร้อมกระสุน',
+                category: 'misc_traps',
+                icon: '🔫',
+                weight: 6,
+                score: 3,
+                tagType: 'trap',
+                tagLabel: 'กับดัก / ไม่คุ้มค่า',
+                shortDesc: 'อาวุธหนักที่หลายคนคิดว่าจำเป็น',
+                lesson: 'กับดักความคิด! กลางทะเลทรายแทบไม่มีสัตว์ใหญ่ให้ล่าหรือทำร้ายคุณ การแบกปืนหนัก 6 หน่วยจึงสิ้นเปลืองพลังงานโดยใช่เหตุ และส่งสัญญาณสู้พลุหรือกระจกไม่ได้'
+            },
+            {
+                id: 'gold_bars',
+                name: 'ทองคำแท่งมูลค่า 1 ล้านบาท',
+                category: 'misc_traps',
+                icon: '🪙',
+                weight: 8,
+                score: 1,
+                tagType: 'trap',
+                tagLabel: 'กับดัก / ไม่คุ้มค่า',
+                shortDesc: 'ทรัพย์สินมีค่ามหาศาลแต่น้ำหนักมาก',
+                lesson: 'บทเรียนชีวิต: เงินทองและทรัพย์สมบัติไม่มีความหมายเลยหากรักษาชีวิตไว้ไม่ได้ กลางทะเลทรายทองคำ 1 ล้านบาทมีค่าน้อยกว่าน้ำดื่มเพียงแก้วเดียว'
+            },
+            {
+                id: 'game_console',
+                name: 'เครื่องเล่นเกมพกพา + พาวเวอร์แบงก์',
+                category: 'misc_traps',
+                icon: '🎮',
+                weight: 5,
+                score: 2,
+                tagType: 'trap',
+                tagLabel: 'กับดัก / ไม่คุ้มค่า',
+                shortDesc: 'ช่วยคลายเครียดได้ชั่วคราว',
+                lesson: 'สิ่งบันเทิงช่วยให้เพลิดเพลินได้ไม่กี่ชั่วโมง แต่ไม่ช่วยแก้ปัญหาความร้อนหรือการขาดน้ำ แถมยังกินพื้นที่กระเป๋าถึง 5 หน่วย'
+            }
+        ];
+
+        /**
+         * --------------------------------------------------------------------
+         * 2. STATE MANAGEMENT
+         * --------------------------------------------------------------------
+         */
+        let activeCategory = CATEGORIES[0].id;
+        let selectedIds = new Set();
+        let soundEnabled = true;
+        let toneInitialized = false;
+        let synth = null;
+        let optimalSolution = null; // Computed via 0/1 Knapsack DP
+
+        /**
+         * --------------------------------------------------------------------
+         * 3. 0/1 KNAPSACK DYNAMIC PROGRAMMING SOLVER
+         * --------------------------------------------------------------------
+         * Guarantees 100% mathematically accurate optimal score & item set
+         * for MAX_WEIGHT = 50.
+         */
+        function solveOptimalKnapsack(items, maxWeight) {
+            const n = items.length;
+            // dp[i][w] = max score using first i items with capacity w
+            const dp = Array.from({ length: n + 1 }, () => Array(maxWeight + 1).fill(0));
+
+            for (let i = 1; i <= n; i++) {
+                const { weight, score } = items[i - 1];
+                for (let w = 0; w <= maxWeight; w++) {
+                    if (weight <= w) {
+                        dp[i][w] = Math.max(dp[i - 1][w], dp[i - 1][w - weight] + score);
+                    } else {
+                        dp[i][w] = dp[i - 1][w];
+                    }
+                }
+            }
+
+            // Backtrack to retrieve selected items
+            const chosenItems = [];
+            let w = maxWeight;
+            for (let i = n; i > 0; i--) {
+                if (dp[i][w] !== dp[i - 1][w]) {
+                    const item = items[i - 1];
+                    chosenItems.push(item);
+                    w -= item.weight;
+                }
+            }
+
+            const totalWeight = chosenItems.reduce((sum, it) => sum + it.weight, 0);
+            return {
+                maxScore: dp[n][maxWeight],
+                totalWeight,
+                items: chosenItems.sort((a, b) => (b.score / b.weight) - (a.score / a.weight))
+            };
+        }
+
+        /**
+         * --------------------------------------------------------------------
+         * 4. AUDIO ENGINE (TONE.JS SYNTHESIZED SFX)
+         * --------------------------------------------------------------------
+         */
+        async function initAudio() {
+            if (!soundEnabled || toneInitialized) return;
+            try {
+                await Tone.start();
+                synth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: 'triangle' },
+                    envelope: { attack: 0.01, decay: 0.12, sustain: 0.05, release: 0.25 }
+                }).toDestination();
+                synth.volume.value = -10;
+                toneInitialized = true;
+            } catch (e) {
+                console.warn('Audio init skipped:', e);
+            }
+        }
+
+        function playSfx(type) {
+            if (!soundEnabled) return;
+            if (!toneInitialized) {
+                initAudio();
+            }
+            if (!synth) return;
+            try {
+                const now = Tone.now();
+                if (type === 'add') {
+                    synth.triggerAttackRelease(['C5', 'E5'], '16n', now);
+                } else if (type === 'remove') {
+                    synth.triggerAttackRelease('A4', '16n', now);
+                } else if (type === 'error') {
+                    synth.triggerAttackRelease(['C3', 'Db3'], '8n', now);
+                } else if (type === 'tab') {
+                    synth.triggerAttackRelease('G4', '32n', now);
+                } else if (type === 'victory') {
+                    synth.triggerAttackRelease('C5', '8n', now);
+                    synth.triggerAttackRelease('E5', '8n', now + 0.12);
+                    synth.triggerAttackRelease('G5', '8n', now + 0.24);
+                    synth.triggerAttackRelease('C6', '4n', now + 0.36);
+                } else if (type === 'finish') {
+                    synth.triggerAttackRelease(['D4', 'F4', 'A4'], '4n', now);
+                }
+            } catch (e) {
+                // Ignore rapid trigger collisions
+            }
+        }
+
+        /**
+         * --------------------------------------------------------------------
+         * 5. CUSTOM TOAST NOTIFICATION SYSTEM
+         * --------------------------------------------------------------------
+         */
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+
+            const styles = {
+                info: 'bg-slate-800/95 border-amber-500/50 text-amber-200',
+                error: 'bg-rose-950/95 border-rose-500 text-rose-200',
+                success: 'bg-emerald-950/95 border-emerald-500 text-emerald-200'
+            };
+
+            const icons = { info: '💡', error: '⚠️', success: '✅' };
+
+            toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl border shadow-xl text-sm font-medium animate-fade-in ${styles[type] || styles.info}`;
+            toast.innerHTML = `<span class="text-lg">${icons[type] || '💡'}</span><span>${message}</span>`;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-8px)';
+                toast.style.transition = 'all 0.25s ease';
+                setTimeout(() => toast.remove(), 260);
+            }, 2600);
+        }
+
+        /**
+         * --------------------------------------------------------------------
+         * 6. HELPER FUNCTIONS
+         * --------------------------------------------------------------------
+         */
+        function getSelectedItems() {
+            return ITEMS.filter(item => selectedIds.has(item.id));
+        }
+
+        function getCurrentWeight() {
+            return getSelectedItems().reduce((sum, item) => sum + item.weight, 0);
+        }
+
+        function getCurrentScore() {
+            return getSelectedItems().reduce((sum, item) => sum + item.score, 0);
+        }
+
+        function getTagBadgeHtml(tagType, tagLabel) {
+            const map = {
+                optimal: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50',
+                heavy_good: 'bg-sky-500/20 text-sky-300 border-sky-500/50',
+                moderate: 'bg-amber-500/20 text-amber-300 border-amber-500/50',
+                trap: 'bg-rose-500/20 text-rose-300 border-rose-500/50'
+            };
+            const dotMap = {
+                optimal: '🟢',
+                heavy_good: '🔵',
+                moderate: '🟡',
+                trap: '🔴'
+            };
+            return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${map[tagType]}">${dotMap[tagType]} ${tagLabel}</span>`;
+        }
+
+        /**
+         * --------------------------------------------------------------------
+         * 7. RENDER FUNCTIONS (GAMEPLAY SCREEN)
+         * --------------------------------------------------------------------
+         */
+        function renderCategoryTabs() {
+            const tabsEl = document.getElementById('category-tabs');
+            tabsEl.innerHTML = '';
+
+            CATEGORIES.forEach(cat => {
+                const countInCat = ITEMS.filter(i => i.category === cat.id).length;
+                const selectedInCat = ITEMS.filter(i => i.category === cat.id && selectedIds.has(i.id)).length;
+                const isActive = activeCategory === cat.id;
+
+                const btn = document.createElement('button');
+                btn.className = `tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 cursor-pointer ${isActive ? 'active' : 'text-slate-300'}`;
+                btn.innerHTML = `
+                    <span>${cat.icon}</span>
+                    <span>${cat.name}</span>
+                    <span class="text-xs opacity-80">(${countInCat})</span>
+                    ${selectedInCat > 0 ? `<span class="ml-0.5 w-5 h-5 rounded-full bg-white/20 text-white text-[11px] flex items-center justify-center font-bold">${selectedInCat}</span>` : ''}
+                `;
+                btn.addEventListener('click', () => {
+                    playSfx('tab');
+                    activeCategory = cat.id;
+                    renderCategoryTabs();
+                    renderItemsGrid();
+                });
+                tabsEl.appendChild(btn);
+            });
+        }
+
+        function renderItemsGrid() {
+            const gridEl = document.getElementById('items-grid');
+            gridEl.innerHTML = '';
+
+            const currentWeight = getCurrentWeight();
+            const filtered = ITEMS.filter(item => item.category === activeCategory);
+
+            filtered.forEach(item => {
+                const isSelected = selectedIds.has(item.id);
+                const wouldExceed = !isSelected && (currentWeight + item.weight > MAX_WEIGHT);
+
+                const card = document.createElement('div');
+                card.className = `item-card rounded-xl p-3.5 cursor-pointer flex items-center gap-3.5 relative select-none ${
+                    isSelected ? 'selected-card' : ''
+                } ${wouldExceed ? 'opacity-55' : ''}`;
+
+                card.innerHTML = `
+                    <div class="w-12 h-12 shrink-0 rounded-xl bg-slate-900/80 border border-slate-700/80 flex items-center justify-center text-2xl">
+                        ${item.icon}
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="font-bold text-sm text-white truncate pr-5" title="${item.name}">${item.name}</div>
+                        <div class="text-xs text-slate-400 truncate mt-0.5">${item.shortDesc}</div>
+                        <div class="flex items-center gap-3 mt-2 text-xs font-bold">
+                            <span class="text-amber-400 flex items-center gap-1" title="น้ำหนัก">
+                                <span>⚖️</span> ${item.weight}
+                            </span>
+                            <span class="text-emerald-400 flex items-center gap-1" title="คะแนนการอยู่รอด">
+                                <span>💚</span> ${item.score}
+                            </span>
+                        </div>
+                    </div>
+                    ${isSelected ? `
+                        <div class="absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-orange-500 text-white text-xs flex items-center justify-center font-bold shadow">
+                            ✓
+                        </div>
+                    ` : ''}
+                `;
+
+                card.addEventListener('click', () => toggleItem(item));
+                gridEl.appendChild(card);
+            });
+        }
+
+        function renderBackpack() {
+            const selected = getSelectedItems();
+            const currentWeight = getCurrentWeight();
+            const remaining = MAX_WEIGHT - currentWeight;
+            const pct = Math.min(100, Math.round((currentWeight / MAX_WEIGHT) * 100));
+
+            // Update Weight Bar & Texts
+            document.getElementById('current-weight-text').textContent = currentWeight;
+            document.getElementById('remaining-weight-text').textContent = `${remaining} หน่วย`;
+            document.getElementById('pack-count-badge').textContent = `${selected.length} ชิ้น`;
+
+            const fillEl = document.getElementById('weight-progress-fill');
+            fillEl.style.width = `${pct}%`;
+
+            const statusBadge = document.getElementById('weight-status-badge');
+            if (currentWeight === 0) {
+                statusBadge.textContent = 'ยังว่างอยู่';
+                statusBadge.className = 'text-xs px-2 py-0.5 rounded-full bg-emerald-900 text-emerald-200';
+                fillEl.className = 'h-full bg-gradient-to-r from-emerald-400 via-yellow-400 to-amber-500 rounded-full transition-all duration-300';
+            } else if (currentWeight === MAX_WEIGHT) {
+                statusBadge.textContent = 'บรรจุเต็มพิกัด!';
+                statusBadge.className = 'text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+                fillEl.className = 'h-full bg-gradient-to-r from-emerald-400 to-yellow-400 rounded-full transition-all duration-300';
+            } else if (pct >= 80) {
+                statusBadge.textContent = 'ใกล้เต็มแล้ว';
+                statusBadge.className = 'text-xs px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-400/40';
+                fillEl.className = 'h-full bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full transition-all duration-300';
+            } else {
+                statusBadge.textContent = 'กำลังจัดกระเป๋า';
+                statusBadge.className = 'text-xs px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-300';
+                fillEl.className = 'h-full bg-gradient-to-r from-emerald-400 via-yellow-400 to-amber-500 rounded-full transition-all duration-300';
+            }
+
+            // Update Backpack List
+            const emptyEl = document.getElementById('backpack-empty');
+            const listEl = document.getElementById('backpack-list');
+
+            if (selected.length === 0) {
+                emptyEl.classList.remove('hidden');
+                listEl.classList.add('hidden');
+                listEl.innerHTML = '';
+            } else {
+                emptyEl.classList.add('hidden');
+                listEl.classList.remove('hidden');
+                listEl.classList.add('flex');
+                listEl.innerHTML = '';
+
+                selected.forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = 'flex items-center justify-between gap-2 bg-slate-800/85 hover:bg-slate-800 border border-slate-700/80 rounded-xl px-3 py-2.5 transition';
+                    row.innerHTML = `
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="text-xl shrink-0">${item.icon}</span>
+                            <div class="min-w-0">
+                                <div class="text-sm font-semibold text-white truncate">${item.name}</div>
+                                <div class="text-xs flex items-center gap-2.5 mt-0.5">
+                                    <span class="text-amber-400 font-semibold">⚖️ ${item.weight}</span>
+                                    <span class="text-emerald-400 font-semibold">💚 ${item.score}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="shrink-0 px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/30 text-rose-300 text-xs font-semibold border border-rose-500/30 transition cursor-pointer">
+                            นำออก
+                        </button>
+                    `;
+                    row.querySelector('button').addEventListener('click', () => toggleItem(item));
+                    listEl.appendChild(row);
+                });
+            }
+        }
+
+        function toggleItem(item) {
+            if (selectedIds.has(item.id)) {
+                selectedIds.delete(item.id);
+                playSfx('remove');
+            } else {
+                const currentWeight = getCurrentWeight();
+                if (currentWeight + item.weight > MAX_WEIGHT) {
+                    playSfx('error');
+                    const bar = document.getElementById('weight-bar-wrapper');
+                    bar.classList.remove('animate-shake');
+                    void bar.offsetWidth; // trigger reflow
+                    bar.classList.add('animate-shake');
+                    showToast(`น้ำหนักเกินพิกัด! เหลือพื้นที่อีกเพียง ${MAX_WEIGHT - currentWeight} หน่วย (ชิ้นนี้หนัก ${item.weight} หน่วย)`, 'error');
+                    return;
+                }
+                selectedIds.add(item.id);
+                playSfx('add');
+            }
+            renderCategoryTabs();
+            renderItemsGrid();
+            renderBackpack();
+        }
+
+        /**
+         * --------------------------------------------------------------------
+         * 8. EVALUATION & EDUCATIONAL DEBRIEF SCREEN
+         * --------------------------------------------------------------------
+         */
+        function showResults() {
+            const selected = getSelectedItems();
+            if (selected.length === 0) {
+                playSfx('error');
+                showToast('กรุณาเลือกสิ่งของอย่างน้อย 1 ชิ้นใส่กระเป๋าก่อนออกเดินทางครับ!', 'error');
+                return;
+            }
+
+            const userWeight = getCurrentWeight();
+            const userScore = getCurrentScore();
+            const maxScore = optimalSolution.maxScore;
+            const ratioPct = Math.round((userScore / maxScore) * 100);
+
+            // Determine Ending Tier
+            let tier;
+            if (ratioPct >= 90) {
+                playSfx('victory');
+                tier = {
+                    emoji: '🏆',
+                    title: 'ตำนานผู้พิชิตทะเลทราย!',
+                    subtitle: 'ยอดเยี่ยมมาก! คุณวางแผนจัดทรัพยากรได้อย่างสมบูรณ์แบบ ทั้งการกันแดด ส่งสัญญาณ และรักษาน้ำ ทำให้ทีมกู้ภัยพบตัวคุณได้อย่างรวดเร็วและปลอดภัย 100%',
+                    borderClass: 'border-emerald-400/70 bg-gradient-to-br from-emerald-950/80 via-slate-900/90 to-teal-950/80',
+                    titleClass: 'text-emerald-300'
+                };
+            } else if (ratioPct >= 75) {
+                playSfx('victory');
+                tier = {
+                    emoji: '✅',
+                    title: 'รอดชีวิตจนทีมกู้ภัยมาถึง!',
+                    subtitle: 'ทำได้ดีมาก! คุณมีอุปกรณ์สำคัญเพียงพอต่อการเอาตัวรอดกลางทะเลทราย แม้จะเหนื่อยล้าบ้างแต่สามารถผ่านพ้นวิกฤตมาได้สำเร็จ',
+                    borderClass: 'border-sky-400/70 bg-gradient-to-br from-sky-950/80 via-slate-900/90 to-slate-900/90',
+                    titleClass: 'text-sky-300'
+                };
+            } else if (ratioPct >= 52) {
+                playSfx('finish');
+                tier = {
+                    emoji: '⚠️',
+                    title: 'รอดหวุดหวิด แต่บอบช้ำหนัก',
+                    subtitle: 'คุณพยุงตัวอยู่รอดมาได้แต่ขาดอุปกรณ์สำคัญบางอย่างหรือแบกของที่ไม่จำเป็นมากเกินไป ทำให้ร่างกายขาดน้ำและอ่อนเพลียอย่างหนัก',
+                    borderClass: 'border-amber-400/70 bg-gradient-to-br from-amber-950/80 via-slate-900/90 to-orange-950/80',
+                    titleClass: 'text-amber-300'
+                };
+            } else {
+                playSfx('error');
+                tier = {
+                    emoji: '🌪️',
+                    title: 'หลงทางกลางพายุทราย (ภารกิจล้มเหลว)',
+                    subtitle: 'อุปกรณ์ที่เลือกยังไม่เพียงพอต่อการรับมืออากาศสุดขั้วหรือติดกับดักของไม่จำเป็น ลองดูเฉลยและคำสอนด้านล่างเพื่อวางแผนใหม่อีกครั้งนะ!',
+                    borderClass: 'border-rose-500/70 bg-gradient-to-br from-rose-950/80 via-slate-900/90 to-slate-950/90',
+                    titleClass: 'text-rose-400'
+                };
+            }
+
+            // Populate Banner
+            const bannerEl = document.getElementById('result-banner');
+            bannerEl.className = `rounded-3xl p-6 sm:p-8 mb-5 border-2 text-center relative overflow-hidden glass-panel ${tier.borderClass}`;
+            document.getElementById('result-emoji').textContent = tier.emoji;
+            const titleEl = document.getElementById('result-title');
+            titleEl.textContent = tier.title;
+            titleEl.className = `text-2xl sm:text-4xl font-extrabold mb-2 ${tier.titleClass}`;
+            document.getElementById('result-subtitle').textContent = tier.subtitle;
+
+            // Populate KPI Cards
+            document.getElementById('res-weight-val').textContent = userWeight;
+            document.getElementById('res-weight-bar').style.width = `${Math.round((userWeight / MAX_WEIGHT) * 100)}%`;
+            document.getElementById('res-score-val').textContent = userScore;
+            document.getElementById('res-optimal-val').textContent = maxScore;
+            document.getElementById('res-percent-badge').textContent = `${ratioPct}%`;
+
+            const scoreNoteEl = document.getElementById('res-score-note');
+            if (userScore === maxScore) {
+                scoreNoteEl.innerHTML = '🎉 <span class="text-emerald-300 font-semibold">สุดยอด! คุณทำคะแนนได้สูงสุดตามหลักคณิตศาสตร์ (100% Optimal)!</span>';
+            } else {
+                scoreNoteEl.innerHTML = `คุณยังสามารถเพิ่มคะแนนได้อีก <strong class="text-amber-300">+${maxScore - userScore} คะแนน</strong> ลองกดดูแท็บ "🏆 เฉลยชุดคะแนนสูงสุด" ทางขวาได้เลย`;
+            }
+
+            // Generate Dynamic Personal Analysis
+            const optimalPicked = selected.filter(i => i.tagType === 'optimal').length;
+            const heavyGoodPicked = selected.filter(i => i.tagType === 'heavy_good').length;
+            const trapsPicked = selected.filter(i => i.tagType === 'trap');
+            const unusedWeight = MAX_WEIGHT - userWeight;
+
+            let analysisHtml = `
+                <p>ภาพรวมคุณเลือกของทั้งหมด <strong>${selected.length} ชิ้น</strong> แบ่งเป็นของคุ้มค่าควรเลือก <strong class="text-emerald-400">${optimalPicked} ชิ้น</strong> และของสำคัญแต่มีน้ำหนักมาก <strong class="text-sky-400">${heavyGoodPicked} ชิ้น</strong></p>
+            `;
+
+            if (trapsPicked.length > 0) {
+                const trapNames = trapsPicked.map(t => `"${t.name}"`).join(', ');
+                analysisHtml += `<p class="text-rose-300">⚠️ <strong>ข้อควรระวัง:</strong> คุณเผลอหยิบไอเทมกับดักไปด้วย ${trapsPicked.length} ชิ้น (${trapNames}) ซึ่งกินน้ำหนักกระเป๋าแต่แทบไม่ช่วยการรอดชีวิตในทะเลทราย</p>`;
+            } else {
+                analysisHtml += `<p class="text-emerald-300">✅ <strong>เยี่ยมมาก!</strong> คุณสามารถหลีกเลี่ยงไอเทมกับดักทั้งหมดได้อย่างชาญฉลาด</p>`;
+            }
+
+            if (unusedWeight >= 4) {
+                analysisHtml += `<p class="text-amber-300">💡 <strong>คำแนะนำเพิ่มคะแนน:</strong> กระเป๋าของคุณยังเหลือพื้นที่ว่างอีก <strong>${unusedWeight} หน่วย</strong> คุณสามารถหยิบของเบาแต่คุ้มค่าอย่าง กระจกเงา, นกหวีด หรือผ้าใบสะท้อนแสง เพิ่มเติมได้อีก</p>`;
+            }
+
+            document.getElementById('res-analysis-text').innerHTML = analysisHtml;
+
+            // Default Result List Tab: User Selection
+            renderResultItemList('user');
+
+            // Switch Screens
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderResultItemList(mode) {
+            const listEl = document.getElementById('res-items-list');
+            const captionEl = document.getElementById('res-list-caption');
+            const btnUser = document.getElementById('tab-res-user');
+            const btnOpt = document.getElementById('tab-res-optimal');
+
+            let itemsToShow = [];
+            if (mode === 'user') {
+                btnUser.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-amber-600 text-white transition cursor-pointer';
+                btnOpt.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition cursor-pointer';
+                captionEl.innerHTML = 'แสดงรายการสิ่งของที่คุณเลือก พร้อมเหตุผลทางวิทยาศาสตร์และคำสอนในแต่ละชิ้น';
+                itemsToShow = getSelectedItems().sort((a, b) => (b.score / b.weight) - (a.score / a.weight));
+            } else {
+                btnOpt.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-emerald-600 text-white transition cursor-pointer';
+                btnUser.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition cursor-pointer';
+                captionEl.innerHTML = `🏆 <strong>เฉลยชุดคะแนนสูงสุด (${optimalSolution.maxScore} คะแนน / น้ำหนัก ${optimalSolution.totalWeight}/${MAX_WEIGHT} หน่วย)</strong> คำนวณด้วยอัลกอริทึม Knapsack Dynamic Programming`;
+                itemsToShow = optimalSolution.items;
+            }
+
+            listEl.innerHTML = '';
+            itemsToShow.forEach(item => {
+                const ratio = (item.score / item.weight).toFixed(2);
+                const isPickedByUser = selectedIds.has(item.id);
+
+                const card = document.createElement('div');
+                card.className = 'bg-slate-900/75 border border-slate-700/70 rounded-xl p-4 transition hover:border-amber-500/40';
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-xl shrink-0">
+                                ${item.icon}
+                            </div>
+                            <div>
+                                <div class="font-bold text-white text-sm sm:text-base flex items-center gap-2 flex-wrap">
+                                    <span>${item.name}</span>
+                                    ${mode === 'optimal' && isPickedByUser ? '<span class="text-[11px] px-2 py-0.5 rounded bg-orange-500/20 text-orange-300 border border-orange-500/40">คุณเลือกชิ้นนี้แล้ว</span>' : ''}
+                                </div>
+                                <div class="flex items-center gap-3 text-xs mt-0.5 font-semibold">
+                                    <span class="text-amber-400">⚖️ น้ำหนัก ${item.weight}</span>
+                                    <span class="text-emerald-400">💚 คะแนน ${item.score}</span>
+                                    <span class="text-slate-400">📊 ความคุ้มค่า ${ratio} แต้ม/หน่วย</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>${getTagBadgeHtml(item.tagType, item.tagLabel)}</div>
+                    </div>
+                    <div class="text-xs sm:text-sm text-slate-300 bg-slate-800/60 rounded-lg p-3 border-l-2 border-amber-400/70 leading-relaxed">
+                        <strong class="text-amber-300">เกร็ดความรู้:</strong> ${item.lesson}
+                    </div>
+                `;
+                listEl.appendChild(card);
+            });
+        }
+
+        /**
+         * --------------------------------------------------------------------
+         * 9. EVENT LISTENERS & INITIALIZATION
+         * --------------------------------------------------------------------
+         */
+        window.onload = function () {
+            // Compute optimal mathematical answer key once on load
+            optimalSolution = solveOptimalKnapsack(ITEMS, MAX_WEIGHT);
+
+            // Start Game Button
+            document.getElementById('btn-start-game').addEventListener('click', () => {
+                initAudio();
+                playSfx('add');
+                document.getElementById('screen-intro').classList.add('hidden');
+                document.getElementById('screen-game').classList.remove('hidden');
+                renderCategoryTabs();
+                renderItemsGrid();
+                renderBackpack();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // Sound Toggle
+            document.getElementById('btn-sound-toggle').addEventListener('click', () => {
+                soundEnabled = !soundEnabled;
+                document.getElementById('sound-icon').textContent = soundEnabled ? '🔊' : '🔇';
+                if (soundEnabled) {
+                    initAudio();
+                    playSfx('tab');
+                }
+            });
+
+            // Reset Backpack
+            document.getElementById('btn-reset-pack').addEventListener('click', () => {
+                if (selectedIds.size === 0) return;
+                selectedIds.clear();
+                playSfx('remove');
+                renderCategoryTabs();
+                renderItemsGrid();
+                renderBackpack();
+                showToast('นำสิ่งของทั้งหมดออกจากกระเป๋าเป้แล้ว', 'info');
+            });
+
+            // Submit Mission
+            document.getElementById('btn-submit-mission').addEventListener('click', showResults);
+
+            // Debrief Tabs
+            document.getElementById('tab-res-user').addEventListener('click', () => {
+                playSfx('tab');
+                renderResultItemList('user');
+            });
+            document.getElementById('tab-res-optimal').addEventListener('click', () => {
+                playSfx('tab');
+                renderResultItemList('optimal');
+            });
+
+            // Play Again
+            document.getElementById('btn-play-again').addEventListener('click', () => {
+                playSfx('add');
+                selectedIds.clear();
+                activeCategory = CATEGORIES[0].id;
+                document.getElementById('screen-result').classList.add('hidden');
+                document.getElementById('screen-game').classList.remove('hidden');
+                renderCategoryTabs();
+                renderItemsGrid();
+                renderBackpack();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        };
+    </script>
+</body>
+</html>

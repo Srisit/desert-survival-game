@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desert Survival: Team Consensus Edition - กิจกรรมกลุ่มหลงทะเลทราย</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tone.js for synthesized UI sound effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <!-- Google Fonts: Prompt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: linear-gradient(180deg, #04150e 0%, #09261a 45%, #0f3b28 85%, #164e34 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(4, 24, 16, 0.55); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: rgba(234, 179, 8, 0.5); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(250, 204, 21, 0.85); }
+
+        .glass-panel {
+            background: rgba(8, 30, 21, 0.86);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(234, 179, 8, 0.28);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.48);
+        }
+
+        .item-card {
+            background: rgba(12, 44, 31, 0.82);
+            border: 1.5px solid rgba(234, 179, 8, 0.14);
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .item-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(250, 204, 21, 0.7);
+            background: rgba(17, 58, 41, 0.94);
+        }
+        .item-card.selected-card {
+            background: rgba(234, 179, 8, 0.16);
+            border-color: #facc15;
+            box-shadow: 0 0 16px rgba(250, 204, 21, 0.25);
+        }
+
+        .btn-desert {
+            background: linear-gradient(135deg, #eab308 0%, #b45309 100%);
+            box-shadow: 0 4px 15px rgba(202, 138, 4, 0.45), inset 0 1px 0 rgba(254, 249, 195, 0.35);
+            transition: all 0.2s ease;
+        }
+        .btn-desert:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(234, 179, 8, 0.65);
+            filter: brightness(1.08);
+        }
+        .btn-desert:active:not(:disabled) { transform: translateY(1px); }
+
+        .btn-consensus {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            box-shadow: 0 4px 18px rgba(16, 185, 129, 0.45);
+            transition: all 0.2s ease;
+        }
+        .btn-consensus:hover:not(:disabled) {
+            transform: translateY(-2px);
+            filter: brightness(1.08);
+        }
+        .btn-consensus:disabled {
+            background: #1e293b;
+            color: #94a3b8;
+            box-shadow: none;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .tab-btn {
+            background: rgba(10, 36, 25, 0.88);
+            border: 1px solid rgba(234, 179, 8, 0.18);
+            transition: all 0.2s ease;
+        }
+        .tab-btn:hover { border-color: rgba(250, 204, 21, 0.6); }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #ca8a04 0%, #a16207 100%);
+            border-color: #fef08a;
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(234, 179, 8, 0.45);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.45); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: rgba(245, 158, 11, 0.45); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(245, 158, 11, 0.85); }
+
+        .glass-panel {
+            background: rgba(22, 25, 38, 0.86);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(251, 191, 36, 0.18);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+        }
+
+        .item-card {
+            background: rgba(31, 35, 52, 0.8);
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .item-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(245, 158, 11, 0.6);
+            background: rgba(42, 46, 68, 0.94);
+        }
+        .item-card.selected-card {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: #10b981;
+            box-shadow: 0 0 16px rgba(16, 185, 129, 0.22);
+        }
+
+        .btn-desert {
+            background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            transition: all 0.2s ease;
+        }
+        .btn-desert:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(234, 88, 12, 0.6);
+            filter: brightness(1.06);
+        }
+        .btn-desert:active:not(:disabled) { transform: translateY(1px); }
+
+        .btn-consensus {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 4px 18px rgba(16, 185, 129, 0.45);
+            transition: all 0.2s ease;
+        }
+        .btn-consensus:hover:not(:disabled) {
+            transform: translateY(-2px);
+            filter: brightness(1.08);
+        }
+        .btn-consensus:disabled {
+            background: #334155;
+            color: #94a3b8;
+            box-shadow: none;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .tab-btn {
+            background: rgba(30, 34, 48, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+        .tab-btn:hover { border-color: rgba(249, 115, 22, 0.5); }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border-color: #fdba74;
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(249, 115, 22, 0.45);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+        .animate-shake { animation: shake 0.36s ease-in-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.32s ease-out forwards; }
+
+        @keyframes pulseUrgent {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+            50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+        }
+        .timer-urgent {
+            animation: pulseUrgent 1.1s infinite;
+            border-color: #ef4444 !important;
+            background: rgba(127, 29, 29, 0.65) !important;
+        }
+
+        .dunes-bg {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 220px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body class="relative selection:bg-yellow-500 selection:text-emerald-950">
+
+    <!-- Background Ambience -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div class="absolute top-[-100px] right-[-80px] w-96 h-96 rounded-full bg-yellow-500/15 blur-3xl"></div>
+        <div class="absolute bottom-10 left-[-100px] w-80 h-80 rounded-full bg-emerald-400/15 blur-3xl"></div>
+        <svg class="dunes-bg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path fill="#14532d" fill-opacity="0.65" d="M0,224L80,213.3C160,203,320,181,480,192C640,203,800,245,960,240C1120,235,1280,181,1360,154.7L1440,128L1440,320L0,320Z"></path>
+            <path fill="#052e16" fill-opacity="0.9" d="M0,288L60,277.3C120,267,240,245,360,245.3C480,245,600,267,720,261.3C840,256,960,224,1080,218.7C1200,213,1320,235,1380,245.3L1440,256L1440,320L0,320Z"></path>
+        </svg>
+    </div>
+
+    <!-- Custom Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[60] flex flex-col gap-2 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
+
+        <!-- ========================================================= -->
+        <!-- SCREEN 1: TEAM SETUP & MISSION CONFIGURATION              -->
+        <!-- ========================================================= -->
+        <section id="screen-setup" class="min-h-[85vh] flex items-center justify-center animate-fade-in">
+            <div class="glass-panel rounded-3xl p-6 sm:p-9 max-w-4xl w-full border border-yellow-500/35 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-500 via-yellow-400 to-emerald-500"></div>
+
+                <!-- Header -->
+                <div class="text-center mb-7">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold bg-yellow-500/15 text-yellow-300 border border-yellow-400/40 mb-3">
+                        <span>🤝</span>
+                        <span>TEAM BUILDING &amp; CONSENSUS WORKSHOP • มสธ.</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-emerald-300 mb-2">
+                        ภารกิจหลงทะเลทราย (ฉบับกิจกรรมกลุ่ม)
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto">
+                        เครื่องบินตกกลางทะเลทรายซาฮารา! ทีมของคุณต้องช่วยกันคัดเลือกสิ่งของใส่กระเป๋าเป้ (สูงสุด 50 หน่วย) 
+                        ภายใต้เวลาที่จำกัด โดยสิ่งของทุกชิ้นจะต้องผ่าน <strong class="text-emerald-300">"มติเอกฉันท์ 100%"</strong> จากสมาชิกทุกคนในทีม
+                    </p>
+                </div>
+
+                <!-- Setup Form Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-7">
+
+                    <!-- Left: Team Info, Size, Timer & Mode -->
+                    <div class="lg:col-span-6 space-y-5 bg-emerald-950/60 p-5 rounded-2xl border border-emerald-700/50">
+                        <!-- Team Name -->
+                        <div>
+                            <label class="block text-sm font-bold text-amber-300 mb-1.5">🚩 ชื่อทีมของคุณ</label>
+                            <input id="input-team-name" type="text" value="ทีมผู้รอดชีวิตอัลฟ่า" maxlength="40"
+                                class="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-600 focus:border-amber-400 focus:outline-none text-white font-medium">
+                        </div>
+
+                        <!-- Team Size Selector -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-sm font-bold text-amber-300">👥 จำนวนสมาชิกในกลุ่ม</label>
+                                <span id="setup-size-label" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300">4 คน</span>
+                            </div>
+                            <div id="size-selector-group" class="grid grid-cols-7 gap-1.5">
+                                <!-- Buttons 2..8 generated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Time Limit Selector -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-sm font-bold text-amber-300">⏱️ กำหนดเวลาในการระดมสมอง</label>
+                                <span id="setup-time-label" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300">10 นาที</span>
+                            </div>
+                            <div id="time-selector-group" class="grid grid-cols-5 gap-2">
+                                <!-- Buttons 3, 5, 10, 15, 20 min generated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Score Visibility Mode -->
+                        <div>
+                            <label class="block text-sm font-bold text-amber-300 mb-1.5">🎯 รูปแบบความท้าทาย</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <button type="button" id="mode-btn-hidden" class="p-3 rounded-xl border-2 border-emerald-500 bg-emerald-500/15 text-left transition cursor-pointer">
+                                    <div class="font-bold text-sm text-emerald-300 flex items-center gap-1.5">
+                                        <span>🕵️</span> โหมดสมจริง (ซ่อนคะแนน)
+                                    </div>
+                                    <div class="text-xs text-slate-300 mt-1">เห็นแค่น้ำหนัก ต้องถกเถียงด้วยเหตุผลจริง (แนะนำสำหรับกิจกรรมกลุ่ม)</div>
+                                </button>
+                                <button type="button" id="mode-btn-visible" class="p-3 rounded-xl border-2 border-slate-700 bg-slate-800/70 text-left transition cursor-pointer hover:border-slate-500">
+                                    <div class="font-bold text-sm text-slate-200 flex items-center gap-1.5">
+                                        <span>📊</span> โหมดมาตรฐาน (แสดงคะแนน)
+                                    </div>
+                                    <div class="text-xs text-slate-400 mt-1">เห็นทั้งน้ำหนักและคะแนน เน้นฝึกวางแผนคำนวณร่วมกัน</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Member Names List -->
+                    <div class="lg:col-span-6 bg-emerald-950/60 p-5 rounded-2xl border border-emerald-700/50 flex flex-col">
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="text-sm font-bold text-amber-300">🪪 รายชื่อสมาชิกในทีม (แก้ไขได้)</h2>
+                            <span class="text-xs text-slate-400">ใช้สำหรับโหวตมติเอกฉันท์</span>
+                        </div>
+                        <div id="member-inputs-list" class="space-y-2.5 overflow-y-auto max-h-[310px] pr-1 flex-1">
+                            <!-- Dynamically generated member inputs -->
+                        </div>
+                        <div class="mt-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/25 text-xs text-amber-200 leading-relaxed">
+                            <strong>กติกามติเอกฉันท์:</strong> เมื่อคลิกเลือกสิ่งของ หน้าต่างโหวตจะเปิดขึ้น สมาชิกทุกคนต้องกด <strong>"เห็นด้วย"</strong> ครบ 100% จึงจะนำของเข้ากระเป๋าได้ หากมีคนคัดค้านแม้แต่คนเดียว ต้องอภิปรายแลกเปลี่ยนเหตุผลกันก่อน!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Launch Button -->
+                <div class="flex justify-center">
+                    <button id="btn-launch-team" class="btn-desert w-full sm:w-auto px-10 py-4 rounded-2xl text-white font-bold text-lg flex items-center justify-center gap-3 cursor-pointer">
+                        <span>🚀</span>
+                        <span>เริ่มภารกิจทีม &amp; เริ่มจับเวลา</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- SCREEN 2: TEAM GAMEPLAY & CONSENSUS WORKSPACE             -->
+        <!-- ========================================================= -->
+        <section id="screen-game" class="hidden animate-fade-in">
+            <!-- Top Mission Control Bar -->
+            <header class="glass-panel rounded-2xl p-4 mb-5 flex flex-col gap-3.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <!-- Team Identity -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-yellow-500/20 border border-yellow-400/45 flex items-center justify-center text-2xl shrink-0">
+                            🤝
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h1 id="hud-team-name" class="text-lg sm:text-xl font-bold text-white leading-tight">ทีมผู้รอดชีวิตอัลฟ่า</h1>
+                                <span id="hud-mode-badge" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">โหมดสมจริง</span>
+                            </div>
+                            <div id="hud-members-strip" class="text-xs text-slate-300 mt-0.5 flex items-center gap-1.5 flex-wrap">
+                                <!-- Member pills -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Countdown Timer & Facilitator Controls -->
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <div id="timer-box" class="flex items-center gap-2.5 px-4 py-2 rounded-xl bg-slate-900/90 border border-amber-500/40 transition-all">
+                            <span class="text-xl">⏱️</span>
+                            <span id="timer-display" class="font-mono text-xl sm:text-2xl font-extrabold text-amber-300 tracking-wider">10:00</span>
+                            <button id="btn-timer-toggle" title="หยุด/เดินเวลาต่อ" class="ml-1 px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-600 cursor-pointer">
+                                ⏸️ พัก
+                            </button>
+                            <button id="btn-timer-add" title="เพิ่มเวลา 1 นาที" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-amber-300 border border-slate-600 cursor-pointer">
+                                +1น.
+                            </button>
+                        </div>
+
+                        <button id="btn-sound-toggle" class="px-3 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-600/60 text-sm text-slate-200 cursor-pointer">
+                            <span id="sound-icon">🔊</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Weight Progress Bar -->
+                <div id="weight-bar-wrapper" class="bg-emerald-950/75 rounded-xl p-3 border border-emerald-700/60">
+                    <div class="flex items-center justify-between text-sm mb-1.5">
+                        <span class="font-semibold text-slate-200 flex items-center gap-2">
+                            <span>⚖️ น้ำหนักรวมในกระเป๋าเป้ทีม</span>
+                            <span id="weight-status-badge" class="text-xs px-2 py-0.5 rounded-full bg-emerald-900 text-emerald-200">ยังว่างอยู่</span>
+                        </span>
+                        <div class="font-bold text-base sm:text-lg">
+                            <span id="current-weight-text" class="text-yellow-400">0</span>
+                            <span class="text-slate-400 text-sm"> / 50 หน่วย</span>
+                        </div>
+                    </div>
+                    <div class="w-full h-3 bg-emerald-950 rounded-full overflow-hidden border border-emerald-700/70">
+                        <div id="weight-progress-fill" class="h-full bg-gradient-to-r from-emerald-400 via-yellow-400 to-amber-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Two-Column Workspace -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+                <!-- LEFT: ITEM CATALOG (7 cols) -->
+                <div class="lg:col-span-7 glass-panel rounded-2xl p-4 sm:p-5">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-yellow-500/30">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span>📦</span>
+                            <span>รายการสิ่งของ (คลิกเพื่อเปิดโหวตมติเอกฉันท์)</span>
+                        </h2>
+                        <span class="text-xs px-2.5 py-1 rounded-full bg-yellow-500/15 text-yellow-300 border border-yellow-400/35">
+                            ต้องเห็นด้วยครบทุกคน
+                        </span>
+                    </div>
+
+                    <!-- Category Tabs -->
+                    <div id="category-tabs" class="flex flex-wrap gap-2 mb-4"></div>
+
+                    <!-- Items Grid -->
+                    <div id="items-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[530px] overflow-y-auto pr-1"></div>
+                </div>
+
+                <!-- RIGHT: APPROVED BACKPACK + CONSENSUS LOG (5 cols) -->
+                <div class="lg:col-span-5 flex flex-col gap-4">
+                    <!-- Team Backpack -->
+                    <div class="glass-panel rounded-2xl p-4 sm:p-5">
+                        <div class="flex items-center justify-between mb-3 pb-2.5 border-b border-emerald-500/30">
+                            <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                                <span>🎒</span>
+                                <span>กระเป๋าเป้ (ผ่านมติเอกฉันท์แล้ว)</span>
+                            </h2>
+                            <span id="pack-count-badge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                0 ชิ้น
+                            </span>
+                        </div>
+
+                        <div class="rounded-xl bg-slate-950/75 border border-dashed border-emerald-500/30 p-3 min-h-[240px] max-h-[300px] overflow-y-auto flex flex-col">
+                            <div id="backpack-empty" class="m-auto text-center py-8 px-3">
+                                <div class="text-4xl mb-2 opacity-60">🗳️</div>
+                                <p class="text-slate-300 font-semibold text-sm">ยังไม่มีสิ่งของที่ผ่านมติเอกฉันท์</p>
+                                <p class="text-xs text-slate-400 mt-1">เลือกสิ่งของทางซ้ายเพื่อเปิดห้องโหวตและอภิปรายร่วมกันในกลุ่ม</p>
+                            </div>
+                            <div id="backpack-list" class="hidden flex-col gap-2"></div>
+                        </div>
+
+                        <div class="mt-3.5 pt-3.5 border-t border-slate-700/70 flex flex-col gap-2.5">
+                            <div class="flex items-center justify-between text-xs sm:text-sm bg-slate-900/70 px-3.5 py-2 rounded-xl border border-slate-700/60">
+                                <span class="text-slate-300">พื้นที่น้ำหนักคงเหลือ:</span>
+                                <span id="remaining-weight-text" class="font-bold text-emerald-400">50 หน่วย</span>
+                            </div>
+                            <button id="btn-submit-team" class="btn-desert w-full py-3.5 rounded-xl text-white font-bold text-base flex items-center justify-center gap-2 cursor-pointer">
+                                <span>🧭</span>
+                                <span>ยืนยันมติสุดท้ายของทีม &amp; ออกเดินทาง!</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Team Discussion & Voting History Log -->
+                    <div class="glass-panel rounded-2xl p-4">
+                        <div class="flex items-center justify-between mb-2.5">
+                            <h3 class="text-sm font-bold text-amber-300 flex items-center gap-1.5">
+                                <span>📜</span>
+                                <span>บันทึกมติที่ประชุมทีม</span>
+                            </h3>
+                            <div class="flex gap-2 text-[11px]">
+                                <span class="text-emerald-300 font-semibold">ผ่าน: <span id="stat-approved-count">0</span></span>
+                                <span class="text-rose-300 font-semibold">ปัดตก: <span id="stat-rejected-count">0</span></span>
+                            </div>
+                        </div>
+                        <div id="meeting-log" class="space-y-1.5 max-h-[120px] overflow-y-auto text-xs pr-1">
+                            <div class="text-slate-400 italic">เริ่มการประชุมทีมแล้ว รอการเสนอสิ่งของชิ้นแรก...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- SCREEN 3: TEAM DEBRIEF, SCORE & TEAMWORK TEACHINGS        -->
+        <!-- ========================================================= -->
+        <section id="screen-result" class="hidden animate-fade-in">
+            <!-- Outcome Banner -->
+            <div id="result-banner" class="rounded-3xl p-6 sm:p-8 mb-5 border-2 text-center glass-panel">
+                <div id="result-team-pill" class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold bg-white/10 text-amber-200 border border-white/15 mb-3"></div>
+                <div id="result-emoji" class="text-5xl mb-2">🏆</div>
+                <h1 id="result-title" class="text-2xl sm:text-4xl font-extrabold mb-2"></h1>
+                <p id="result-subtitle" class="text-slate-200 text-sm sm:text-base max-w-3xl mx-auto leading-relaxed"></p>
+            </div>
+
+            <!-- 4 KPI Cards Row -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 mb-5">
+                <div class="glass-panel rounded-2xl p-4">
+                    <div class="text-xs text-slate-400 mb-1">💚 คะแนนเอาชีวิตรอด</div>
+                    <div class="text-2xl font-extrabold text-emerald-400">
+                        <span id="res-score-val">0</span>
+                        <span class="text-xs font-normal text-slate-400">/ <span id="res-optimal-val">0</span></span>
+                    </div>
+                    <div id="res-percent-text" class="text-xs font-semibold text-emerald-300 mt-1">0% ของคะแนนสูงสุด</div>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-4">
+                    <div class="text-xs text-slate-400 mb-1">⚖️ น้ำหนักกระเป๋ารวม</div>
+                    <div class="text-2xl font-extrabold text-amber-400">
+                        <span id="res-weight-val">0</span> <span class="text-xs font-normal text-slate-400">/ 50 หน่วย</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden mt-2">
+                        <div id="res-weight-bar" class="h-full bg-amber-400" style="width:0%"></div>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-4">
+                    <div class="text-xs text-slate-400 mb-1">⏱️ เวลาที่ใช้ในการประชุม</div>
+                    <div id="res-time-used" class="text-2xl font-extrabold text-sky-400">00:00</div>
+                    <div id="res-time-note" class="text-xs text-slate-300 mt-1">บริหารเวลาได้ดี</div>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-4">
+                    <div class="text-xs text-slate-400 mb-1">🤝 พลวัตการหาฉันทามติ</div>
+                    <div class="text-xl font-extrabold text-purple-300">
+                        <span id="res-approved-stat">0</span> ผ่าน / <span id="res-rejected-stat" class="text-rose-300">0</span> ปัดตก
+                    </div>
+                    <div id="res-dissent-note" class="text-xs text-slate-300 mt-1">จำนวนครั้งที่มีการคัดค้าน: 0</div>
+                </div>
+            </div>
+
+            <!-- Debrief 2-Column Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+                <!-- LEFT: TEAM ANALYSIS + TEAMWORK & SURVIVAL LESSONS (5 cols) -->
+                <div class="lg:col-span-5 flex flex-col gap-5">
+                    <!-- Team Decision Analysis -->
+                    <div class="glass-panel rounded-2xl p-5">
+                        <h2 class="text-lg font-bold text-amber-300 flex items-center gap-2 mb-3">
+                            <span>💡</span>
+                            <span>บทวิเคราะห์การทำงานของทีม</span>
+                        </h2>
+                        <div id="res-analysis-text" class="text-sm text-slate-200 leading-relaxed space-y-2.5 bg-slate-900/65 p-4 rounded-xl border border-slate-700/60"></div>
+                    </div>
+
+                    <!-- Teamwork & Survival Teachings -->
+                    <div class="glass-panel rounded-2xl p-5 border border-emerald-500/25">
+                        <h2 class="text-lg font-bold text-emerald-300 flex items-center gap-2 mb-3">
+                            <span>🎓</span>
+                            <span>คำสอนแทรกความรู้ (Teamwork &amp; Survival)</span>
+                        </h2>
+                        <div class="space-y-3 text-sm">
+                            <div class="bg-slate-900/65 p-3.5 rounded-xl border-l-4 border-purple-400">
+                                <h3 class="font-bold text-purple-300 mb-1">1. พลังของ "เสียงคัดค้าน" และการหาฉันทามติ</h3>
+                                <p class="text-slate-300 leading-relaxed">
+                                    ในกิจกรรมกลุ่ม <strong>คนที่กด "คัดค้าน" ไม่ใช่ตัวถ่วง</strong> แต่คือคนที่ช่วยเบรกไม่ให้ทีมตกหลุมพราง <em>Groupthink (การคิดตามกันโดยไม่ไตร่ตรอง)</em> 
+                                    การเปิดใจรับฟังเหตุผลของเสียงส่วนน้อยจนได้มติเอกฉันท์ มักนำไปสู่การตัดสินใจที่แม่นยำกว่าการโหวตเอาเสียงข้างมากแบบรีบร้อน
+                                </p>
+                            </div>
+
+                            <div class="bg-slate-900/65 p-3.5 rounded-xl border-l-4 border-sky-400">
+                                <h3 class="font-bold text-sky-300 mb-1">2. กฎแห่งเลข 3 &amp; ลำดับความสำคัญ (Rule of Threes)</h3>
+                                <p class="text-slate-300 leading-relaxed">
+                                    มนุษย์ขาดอากาศได้ 3 นาที, ทนสภาพอากาศสุดขั้วได้ 3 ชม., ขาดน้ำได้ 3 วัน และขาดอาหารได้ 3 สัปดาห์ 
+                                    ในทะเลทราย <strong>การกันแดด-กันหนาว การส่งสัญญาณขอความช่วยเหลือ (กระจกเงา/นกหวีด) และน้ำดื่ม</strong> จึงสำคัญกว่าอาวุธหรืออาหารรสเค็ม
+                                </p>
+                            </div>
+
+                            <div class="bg-slate-900/65 p-3.5 rounded-xl border-l-4 border-amber-400">
+                                <h3 class="font-bold text-amber-300 mb-1">3. บริหารทรัพยากรจำกัดภายใต้แรงกดดันเวลา</h3>
+                                <p class="text-slate-300 leading-relaxed">
+                                    การทำงานจริงในองค์กรมีทั้ง <strong>งบประมาณจำกัด (50 หน่วย)</strong> และ <strong>เส้นตาย (เวลา)</strong> 
+                                    ทีมที่ยอดเยี่ยมจะไม่เสียเวลากับ "ของกับดักที่ดูหรูหราแต่ไร้ประโยชน์" แต่จะโฟกัสที่สิ่งซึ่งสร้างผลลัพธ์ต่อเป้าหมายได้คุ้มค่าที่สุด (High Impact / Low Weight)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: ITEM BREAKDOWN & OPTIMAL KEY (7 cols) -->
+                <div class="lg:col-span-7 glass-panel rounded-2xl p-5">
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-700/80">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span>🔍</span>
+                            <span>เฉลยเหตุผลและเกร็ดความรู้รายชิ้น</span>
+                        </h2>
+                        <div class="flex bg-emerald-950/90 p-1 rounded-xl border border-emerald-700/70">
+                            <button id="tab-res-team" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-amber-600 text-white transition cursor-pointer">
+                                สิ่งที่ทีมเลือก
+                            </button>
+                            <button id="tab-res-optimal" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition cursor-pointer">
+                                🏆 เฉลยคะแนนสูงสุด
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="res-list-caption" class="text-xs sm:text-sm text-slate-300 mb-3 bg-slate-900/50 px-3.5 py-2 rounded-lg border border-slate-800"></div>
+                    <div id="res-items-list" class="space-y-3 max-h-[540px] overflow-y-auto pr-1"></div>
+                </div>
+            </div>
+
+            <!-- Replay Controls -->
+            <div class="mt-7 flex flex-wrap items-center justify-center gap-4">
+                <button id="btn-replay-same" class="btn-desert px-7 py-3.5 rounded-2xl text-white font-bold text-base flex items-center gap-2 cursor-pointer">
+                    <span>🔄</span>
+                    <span>เล่นรอบใหม่ด้วยทีมเดิม</span>
+                </button>
+                <button id="btn-back-setup" class="px-7 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold text-base flex items-center gap-2 transition cursor-pointer">
+                    <span>⚙️</span>
+                    <span>ตั้งค่ากลุ่มและเวลาใหม่</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- CREDIT FOOTER                                             -->
+        <!-- ========================================================= -->
+        <footer class="mt-8 pt-4 pb-2 text-center text-xs sm:text-sm text-slate-300/90">
+            <div class="glass-panel inline-block px-6 py-3.5 rounded-2xl border border-yellow-400/40 bg-emerald-950/85">
+                <p class="font-bold text-yellow-300">ผศ.ดร.ศรีสิทธิ์ เจียรบุตร</p>
+                <p class="text-emerald-100/90 mt-0.5">หลักสูตรเทคโนโลยีการจัดการทางวิศวกรรม สาขาวิชาวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยสุโขทัยธรรมาธิราช</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL 1: UNANIMOUS CONSENSUS VOTING ROOM                  -->
+    <!-- ========================================================= -->
+    <div id="modal-vote" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+        <div class="glass-panel rounded-3xl max-w-2xl w-full p-5 sm:p-7 border border-amber-500/40 relative animate-fade-in max-h-[92vh] overflow-y-auto">
+            <!-- Header -->
+            <div class="flex items-start justify-between gap-3 mb-4 pb-3 border-b border-slate-700/80">
+                <div>
+                    <span id="vote-action-badge" class="inline-block text-xs font-bold px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-300 border border-orange-500/40 mb-1.5">
+                        🗳️ เสนอหยิบเข้ากระเป๋าเป้
+                    </span>
+                    <h2 id="vote-item-name" class="text-xl sm:text-2xl font-extrabold text-white">ชื่อสิ่งของ</h2>
+                </div>
+                <button id="btn-close-vote" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center font-bold cursor-pointer">✕</button>
+            </div>
+
+            <!-- Item Preview Card -->
+            <div class="flex items-center gap-4 bg-slate-900/75 p-4 rounded-2xl border border-slate-700/70 mb-5">
+                <div id="vote-item-icon" class="w-16 h-16 rounded-2xl bg-slate-800 border border-slate-600 flex items-center justify-center text-4xl shrink-0">🪞</div>
+                <div class="flex-1 min-w-0">
+                    <p id="vote-item-desc" class="text-sm text-slate-300 mb-2"></p>
+                    <div class="flex flex-wrap items-center gap-3 text-xs sm:text-sm font-bold">
+                        <span class="px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                            ⚖️ น้ำหนัก: <span id="vote-item-weight">0</span> หน่วย
+                        </span>
+                        <span id="vote-item-score-wrap" class="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                            💚 คะแนน: <span id="vote-item-score">0</span>
+                        </span>
+                        <span class="text-xs text-slate-400 font-normal">
+                            (น้ำหนักหลังอนุมัติ: <strong id="vote-projected-weight" class="text-white">0</strong>/50)
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consensus Progress Banner -->
+            <div id="vote-status-box" class="rounded-xl p-3.5 mb-4 border bg-slate-900/80 border-slate-700 flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2 text-sm font-bold">
+                    <span id="vote-status-icon">⏳</span>
+                    <span id="vote-status-text" class="text-amber-300">รอสมาชิกทุกคนลงมติ (ต้องเห็นด้วย 100%)</span>
+                </div>
+                <span id="vote-tally-badge" class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-slate-800 text-slate-200">
+                    เห็นด้วย 0 / 4 คน
+                </span>
+            </div>
+
+            <!-- Members Voting Grid -->
+            <div id="vote-members-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-5">
+                <!-- Dynamically populated member vote cards -->
+            </div>
+
+            <!-- Facilitator Quick-All Button -->
+            <div class="mb-5 flex justify-end">
+                <button id="btn-vote-all-agree" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-emerald-900/50 text-emerald-300 border border-emerald-500/30 transition cursor-pointer flex items-center gap-1.5">
+                    <span>🙌</span>
+                    <span>ทุกคนในห้องยกมือเห็นด้วยทั้งหมด (กดมติเอกฉันท์ลัด)</span>
+                </button>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-700/80">
+                <button id="btn-reject-proposal" class="w-full sm:w-auto px-5 py-3 rounded-xl bg-rose-950/70 hover:bg-rose-900/80 border border-rose-500/50 text-rose-200 font-bold text-sm transition cursor-pointer">
+                    ❌ ตกไป (ไม่ผ่านมติ / ยกเลิก)
+                </button>
+                <button id="btn-confirm-consensus" disabled class="btn-consensus w-full sm:w-auto px-7 py-3 rounded-xl text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 cursor-pointer">
+                    <span>✅</span>
+                    <span id="btn-confirm-text">ยืนยันมติเอกฉันท์ (100%)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL 2: TIME UP ALERT MODAL (NO alert() USED)            -->
+    <!-- ========================================================= -->
+    <div id="modal-timeup" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="glass-panel rounded-3xl max-w-md w-full p-6 sm:p-8 border-2 border-rose-500/70 text-center animate-fade-in">
+            <div class="text-5xl mb-3">⏰</div>
+            <h2 class="text-2xl font-extrabold text-rose-400 mb-2">หมดเวลาการระดมสมองแล้ว!</h2>
+            <p class="text-sm text-slate-300 mb-6 leading-relaxed">
+                เครื่องบินกำลังจะระเบิด! ทีมของคุณต้องออกเดินทางด้วยสิ่งของที่ผ่านมติเอกฉันท์ในกระเป๋าตอนนี้ทันที 
+                (หรือวิทยากรสามารถกดต่อเวลาฉุกเฉินได้)
+            </p>
+            <div class="flex flex-col gap-3">
+                <button id="btn-timeup-submit" class="btn-desert w-full py-3.5 rounded-xl text-white font-bold text-base cursor-pointer">
+                    🧭 ออกเดินทางและสรุปผลทันที
+                </button>
+                <button id="btn-timeup-extend" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-semibold text-sm cursor-pointer">
+                    ⏱️ ต่อเวลาฉุกเฉินอีก +2 นาที (สำหรับวิทยากร)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- JAVASCRIPT APPLICATION LOGIC                              -->
+    <!-- ========================================================= -->
+    <script>
+        /**
+         * --------------------------------------------------------------------
+         * 1. CONSTANTS & EDUCATIONAL ITEM DATA
+         * --------------------------------------------------------------------
+         */
+        const MAX_WEIGHT = 50;
+        const MEMBER_AVATARS = ['🦁', '🦊', '🐼', '🐯', '🦉', '🐺', '🦅', '🐨'];
+
+        const CATEGORIES = [
+            { id: 'water_food', name: 'น้ำและอาหาร', icon: '💧' },
+            { id: 'nav_signal', name: 'นำทาง/สัญญาณ', icon: '🧭' },
+            { id: 'shelter', name: 'ที่พัก/ป้องกัน', icon: '⛺' },
+            { id: 'medical_tools', name: 'การแพทย์/เครื่องมือ', icon: '🩺' },
+            { id: 'misc_traps', name: 'ของทั่วไป/กับดัก', icon: '🎒' }
+        ];
+
+        const ITEMS = [
+            { id: 'water_tank', name: 'ถังน้ำดื่มสะอาด 10 ลิตร', category: 'water_food', icon: '🚰', weight: 10, score: 18, tagType: 'heavy_good', tagLabel: 'สำคัญมากแต่หนัก', shortDesc: 'แหล่งน้ำหลักสำหรับประทังชีวิตหลายวัน', lesson: 'น้ำคือหัวใจของการรอดชีวิตในทะเลทราย ร่างกายขาดน้ำได้ไม่เกิน 3 วัน แม้จะหนักถึง 10 หน่วย แต่ช่วยยืดชีวิตให้ทุกคนในทีมได้อย่างแท้จริง' },
+            { id: 'water_tabs', name: 'เม็ดฟู่กรองน้ำสะอาด', category: 'water_food', icon: '💊', weight: 2, score: 6, tagType: 'optimal', tagLabel: 'คุ้มค่า ควรเลือก', shortDesc: 'ฆ่าเชื้อโรคในน้ำขุ่นให้ดื่มได้ปลอดภัย', lesson: 'น้ำหนักเบามากแต่คุ้มค่าสุดๆ! หากพบแหล่งน้ำธรรมชาติที่ไม่สะอาด เม็ดฟู่จะช่วยป้องกันอาการท้องเสียซึ่งทำให้ร่างกายเสียน้ำจนถึงชีวิตได้' },
+            { id: 'ors_powder', name: 'ผงเกลือแร่ ORS (10 ซอง)', category: 'water_food', icon: '🧃', weight: 2, score: 5, tagType: 'optimal', tagLabel: 'คุ้มค่า ควรเลือก', shortDesc: 'ชดเชยเกลือแร่ที่เสียไปกับเหงื่อ', lesson: 'การดื่มแต่น้ำเปล่าเมื่อเหงื่อออกมากอาจทำให้ขาดโซเดียมและเป็นตะคริว ผงเกลือแร่ช่วยรักษาสมดุลร่างกายและป้องกันฮีทสโตรก' },
+            { id: 'energy_bars', name: 'อาหารอัดแท่งพลังงานสูง', category: 'water_food', icon: '🍫', weight: 4, score: 7, tagType: 'optimal', tagLabel: 'คุ้มค่า ควรเลือก', shortDesc: 'คาร์โบไฮเดรตเข้มข้น ย่อยง่ายไม่เปลืองน้ำ', lesson: 'อาหารกลุ่มคาร์โบไฮเดรตใช้น้ำในการย่อยน้อยกว่าโปรตีน จึงเหมาะกับทะเลทรายมากที่สุด ช่วยให้ทีมมีแรงเดินและตั้งสติได้' },
+            { id: 'salty_jerky', name: 'เนื้อแดดเดียวรสเค็มจัด', category: 'water_food', icon: '🥩', weight: 5, score: 2, tagType: 'trap', tagLabel: 'กับดัก / ไม่คุ้มค่า', shortDesc: 'อาหารรสจัด เก็บได้นานแต่ทำให้คอแห้ง', lesson: 'กับดักยอดฮิต! อาหารเค็มจัดและโปรตีนสูงจะดึงน้ำจากเซลล์ร่างกายไปใช้ในการย่อยและขับโซเดียม ทำให้กระหายน้ำหนักกว่าเดิมเป็นสองเท่า' },
+            { id: 'vodka_bottle', name: 'ขวดเหล้าวอดก้า 1 ลิตร', category: 'water_food', icon: '🍾', weight: 4, score: 1, tagType: 'trap', tagLabel: 'กับดัก / ไม่คุ้มค่า', shortDesc: 'เครื่องดื่มแอลกอฮอล์ความเข้มข้นสูง', lesson: 'กับดักอันตราย! ห้ามดื่มแอลกอฮอล์แก้กระหายเด็ดขาด เพราะมีฤทธิ์ขับปัสสาวะ ทำให้ร่างกายขาดน้ำเร็วขึ้นมาก ไม่คุ้มกับน้ำหนัก 4 หน่วย' },
+
+            { id: 'signal_mirror', name: 'กระจกเงาขนาดพกพา', category: 'nav_signal', icon: '🪞', weight: 1, score: 5, tagType: 'optimal', tagLabel: 'คุ้มค่า ควรเลือก', shortDesc: 'สะท้อนแสงแดดส่งสัญญาณขอความช่วยเหลือ', lesson: 'สุดยอดไอเทมอันดับ 1 ของหลักสูตร NASA! น้ำหนักแค่ 1 หน่วย แต่สะท้อนแสงแดดได้ไกลกว่า 15 กม. ช่วยให้เฮลิคอปเตอร์กู้ภัยเห็นทีมคุณได้ทันที' },
+            { id: 'whistle', name: 'นกหวีดสัญญาณฉุกเฉิน', category: 'nav_signal', icon: '📯', weight: 1, score: 4, tagType: 'optimal', tagLabel: 'คุ้มค่า ควรเลือก', shortDesc: 'ส่งเสียงดังไกลโดยไม่ต้องตะโกน', lesson: 'การตะโกนทำให้คอแห้งและเสียน้ำเร็วมาก นกหวีดใช้แรงเป่าน้อยกว่าแต่ส่งเสียงได้ไกลกว่าเสียงคนถึง 3 เท่า แถมใช้เรียกหากันในทีมเวลาพลัดหลงได้ด้วย' },
+            { id: 'signal_flare', name: 'พลุแฟลร์ส่งสัญญาณ', category: 'nav_signal', icon: '🧨', weight: 3, score: 7, tagType: 'optimal', tagLabel: 'คุ้มค่า ควรเลือก', shortDesc: 'ยิงแสงสีแดงสว่างจ้าในเวลากลางคืน', lesson: 'เมื่อตกกลางคืนกระจกเงาจะใช้ไม่ได้ พลุแฟลร์คือตัวช่วยสำคัญที่ดึงดูดสายตาทีมค้นหาทางอากาศได้อย่างมีประสิทธิภาพ' },
+            { id: 'compass', name: 'เข็มทิศแม่เหล็ก', category: 'nav_signal', icon: '🧭', weight: 2, score: 5, tagType: 'optimal', tagLabel: 'คุ้มค่า ควรเลือก', shortDesc: 'ระบุทิศเหนือ-ใต้อย่างแม่นยำ', lesson: 'กลางทะเลทรายที่ทุกด้านเป็นเนินทรายเหมือนกันหมด มนุษย์มักเดินวนเป็นวงกลมโดยไม่รู้ตัว เข็มทิศช่วยให้ทีมรักษาทิศทางได้แม่นยำ' },
+            { id: 'air_map', name: 'แผนที่ทางอากาศฉบับใหญ่', category: 'nav_signal', icon: '🗺️', weight: 4, score: 4, tagType: 'moderate', tagLabel: 'พอใช้ได้', shortDesc: 'แสดงภูมิประเทศทะเลทรายโดยรอบ', lesson: 'มีประโยชน์เฉพาะเมื่อรู้ตำแหน่งตกที่แน่ชัด แต่บ่อยครั้งการอยู่รวมกลุ่มใกล้ซากเครื่องบินเพื่อรอทีมกู้ภัยปลอดภัยกว่าการเสี่ยงเดินไกล' },
+
+            { id: 'thermal_blanket', name: 'ผ้าใบสะท้อนแสง (Emergency Blanket)', category: 'shelter', icon: '🛡️', weight: 2, score: 7, tagType: 'optimal', tagLabel: 'คุ้มค่า ควรเลือก', shortDesc: 'กันแดดตอนกลางวัน ห่มกันหนาวตอนกลางคืน', lesson: 'คุ้มค่ามาก! ทะเลทรายกลางวันร้อน 45°C กลางคืนลดฮวบเหลือ 5°C ผ้าใบนี้กางบังแดดและห่มกันหนาวให้ทีมได้เป็นอย่างดี' },
+            { id: 'long_sleeve', name: 'เสื้อคลุมแขนยาวสีอ่อน + ผ้าโพกหัว', category: 'shelter', icon: '🧥', weight: 3, score: 8, tagType: 'optimal', tagLabel: 'คุ้มค่า ควรเลือก', shortDesc: 'ปกป้องผิวจากแดดและลดการระเหยของเหงื่อ', lesson: 'หลายคนเข้าใจผิดว่าอากาศร้อนควรถอดเสื้อ แต่ความจริงเสื้อแขนยาวสีอ่อนช่วยสะท้อนแดดและชะลอการเสียน้ำทางผิวหนังได้ถึง 30%!' },
+            { id: 'sunglasses', name: 'แว่นกันแดดกันลมทราย', category: 'shelter', icon: '🕶️', weight: 1, score: 3, tagType: 'optimal', tagLabel: 'คุ้มค่า ควรเลือก', shortDesc: 'กันแสงสะท้อนจากทรายและฝุ่นพายุ', lesson: 'แสงแดดที่สะท้อนจากผืนทรายทำให้เกิดภาวะตาพร่าและปวดศีรษะรุนแรง แว่นกันแดดหนักแค่ 1 หน่วยแต่ช่วยถนอมดวงตาได้ดีมาก' },
+            { id: 'big_tent', name: 'เต็นท์แคมป์ปิ้งขนาดใหญ่', category: 'shelter', icon: '⛺', weight: 12, score: 14, tagType: 'heavy_good', tagLabel: 'สำคัญมากแต่หนัก', shortDesc: 'ที่พักกันแดดและพายุทรายอย่างดีเยี่ยม', lesson: 'ให้ร่มเงาและกันลมได้ดีมาก แต่หนักถึง 12 หน่วย หากต้องแบกเดินจะทำให้ทีมเสียเหงื่อและพลังงานมากเกินไป ผ้าใบสะท้อนแสงจึงคล่องตัวกว่า' },
+
+            { id: 'swiss_knife', name: 'มีดพับอเนกประสงค์', category: 'medical_tools', icon: '🔪', weight: 2, score: 6, tagType: 'optimal', tagLabel: 'คุ้มค่า ควรเลือก', shortDesc: 'ตัดเชือก ทำที่บังแดด และงานช่างฉุกเฉิน', lesson: 'เครื่องมือพื้นฐานที่ขาดไม่ได้ในทุกสถานการณ์เอาตัวรอด ช่วยดัดแปลงสิ่งของรอบตัวให้กลายเป็นที่พักหรืออุปกรณ์ส่งสัญญาณได้' },
+            { id: 'first_aid', name: 'ชุดปฐมพยาบาลเบื้องต้น', category: 'medical_tools', icon: '🩹', weight: 4, score: 8, tagType: 'optimal', tagLabel: 'คุ้มค่า ควรเลือก', shortDesc: 'ผ้าพันแผล ยาฆ่าเชื้อ และยาแก้ปวด', lesson: 'แผลถลอกเล็กน้อยจากซากเครื่องบินสามารถติดเชื้อรุนแรงได้เมื่อโดนทรายและความร้อน ชุดทำแผลช่วยดูแลสมาชิกในทีมได้อย่างทันท่วงที' },
+            { id: 'solar_flashlight', name: 'ไฟฉายพลังงานแสงอาทิตย์', category: 'medical_tools', icon: '🔦', weight: 3, score: 6, tagType: 'optimal', tagLabel: 'คุ้มค่า ควรเลือก', shortDesc: 'ให้แสงสว่างยามค่ำคืน ชาร์จด้วยแสงแดด', lesson: 'กลางคืนในทะเลทรายมืดสนิทและมีสัตว์มีพิษออกหากิน ไฟฉายโซลาร์ช่วยส่องทางและใช้กะพริบส่งสัญญาณได้โดยไม่กลัวถ่านหมด' },
+            { id: 'paracord', name: 'เชือกพาราคอร์ด 20 เมตร', category: 'medical_tools', icon: '🪢', weight: 3, score: 5, tagType: 'moderate', tagLabel: 'พอใช้ได้', shortDesc: 'เชือกเหนียวพิเศษสำหรับผูกเพิงหรือมัดของ', lesson: 'ใช้ผูกผ้าใบทำเพิงบังแดด มัดกระเป๋า หรือใช้ผูกเชื่อมกันในทีมเวลาเดินฝ่าพายุทราย เป็นอุปกรณ์เสริมที่มีประโยชน์หลากหลาย' },
+
+            { id: 'pistol', name: 'ปืนพกพร้อมกระสุน', category: 'misc_traps', icon: '🔫', weight: 6, score: 3, tagType: 'trap', tagLabel: 'กับดัก / ไม่คุ้มค่า', shortDesc: 'อาวุธหนักที่หลายคนคิดว่าจำเป็น', lesson: 'กับดักความคิด! กลางทะเลทรายแทบไม่มีสัตว์ใหญ่ให้ล่า การแบกปืนหนัก 6 หน่วยจึงสิ้นเปลืองพลังงานโดยใช่เหตุ และส่งสัญญาณสู้พลุหรือกระจกไม่ได้' },
+            { id: 'gold_bars', name: 'ทองคำแท่งมูลค่า 1 ล้านบาท', category: 'misc_traps', icon: '🪙', weight: 8, score: 1, tagType: 'trap', tagLabel: 'กับดัก / ไม่คุ้มค่า', shortDesc: 'ทรัพย์สินมีค่ามหาศาลแต่น้ำหนักมาก', lesson: 'บทเรียนชีวิต: เงินทองและทรัพย์สมบัติไม่มีความหมายเลยหากรักษาชีวิตทีมไว้ไม่ได้ กลางทะเลทรายทองคำ 1 ล้านบาทมีค่าน้อยกว่าน้ำดื่มเพียงแก้วเดียว' },
+            { id: 'game_console', name: 'เครื่องเล่นเกมพกพา + พาวเวอร์แบงก์', category: 'misc_traps', icon: '🎮', weight: 5, score: 2, tagType: 'trap', tagLabel: 'กับดัก / ไม่คุ้มค่า', shortDesc: 'ช่วยคลายเครียดได้ชั่วคราว', lesson: 'สิ่งบันเทิงช่วยให้เพลิดเพลินได้ไม่กี่ชั่วโมง แต่ไม่ช่วยแก้ปัญหาความร้อนหรือการขาดน้ำ แถมยังกินพื้นที่กระเป๋าถึง 5 หน่วย' }
+        ];
+
+        /**
+         * --------------------------------------------------------------------
+         * 2. APPLICATION STATE
+         * --------------------------------------------------------------------
+         */
+        let teamConfig = {
+            name: 'ทีมผู้รอดชีวิตอัลฟ่า',
+            size: 4,
+            members: [], // [{ id, name, avatar }]
+            minutes: 10,
+            hideScores: true
+        };
+
+        let activeCategory = CATEGORIES[0].id;
+        let selectedIds = new Set();
+        let optimalSolution = null;
+
+        // Timer State
+        let totalSeconds = 600;
+        let remainingSeconds = 600;
+        let timerInterval = null;
+        let timerPaused = false;
+
+        // Consensus Voting State
+        let currentVote = {
+            item: null,
+            action: 'add', // 'add' or 'remove'
+            votes: {}      // memberId -> 'agree' | 'disagree' | null
+        };
+
+        // Team Dynamics Metrics
+        let teamMetrics = {
+            approvedCount: 0,
+            rejectedCount: 0,
+            dissentEvents: 0
+        };
+
+        // Audio State
+        let soundEnabled = true;
+        let toneInitialized = false;
+        let synth = null;
+
+        /**
+         * --------------------------------------------------------------------
+         * 3. 0/1 KNAPSACK DYNAMIC PROGRAMMING SOLVER
+         * --------------------------------------------------------------------
+         */
+        function solveOptimalKnapsack(items, maxWeight) {
+            const n = items.length;
+            const dp = Array.from({ length: n + 1 }, () => Array(maxWeight + 1).fill(0));
+            for (let i = 1; i <= n; i++) {
+                const { weight, score } = items[i - 1];
+                for (let w = 0; w <= maxWeight; w++) {
+                    dp[i][w] = weight <= w
+                        ? Math.max(dp[i - 1][w], dp[i - 1][w - weight] + score)
+                        : dp[i - 1][w];
+                }
+            }
+            const chosen = [];
+            let w = maxWeight;
+            for (let i = n; i > 0; i--) {
+                if (dp[i][w] !== dp[i - 1][w]) {
+                    chosen.push(items[i - 1]);
+                    w -= items[i - 1].weight;
+                }
+            }
+            return {
+                maxScore: dp[n][maxWeight],
+                totalWeight: chosen.reduce((s, it) => s + it.weight, 0),
+                items: chosen.sort((a, b) => (b.score / b.weight) - (a.score / a.weight))
+            };
+        }
+
+        /**
+         * --------------------------------------------------------------------
+         * 4. AUDIO ENGINE (TONE.JS)
+         * --------------------------------------------------------------------
+         */
+        async function initAudio() {
+            if (!soundEnabled || toneInitialized) return;
+            try {
+                await Tone.start();
+                synth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: 'triangle' },
+                    envelope: { attack: 0.01, decay: 0.12, sustain: 0.05, release: 0.25 }
+                }).toDestination();
+                synth.volume.value = -10;
+                toneInitialized = true;
+            } catch (e) {}
+        }
+
+        function playSfx(type) {
+            if (!soundEnabled) return;
+            if (!toneInitialized) initAudio();
+            if (!synth) return;
+            try {
+                const now = Tone.now();
+                if (type === 'vote_yes') synth.triggerAttackRelease('E5', '32n', now);
+                else if (type === 'vote_no') synth.triggerAttackRelease('D4', '16n', now);
+                else if (type === 'consensus') {
+                    synth.triggerAttackRelease('C5', '16n', now);
+                    synth.triggerAttackRelease('E5', '16n', now + 0.08);
+                    synth.triggerAttackRelease('G5', '8n', now + 0.16);
+                } else if (type === 'error') {
+                    synth.triggerAttackRelease(['C3', 'Db3'], '8n', now);
+                } else if (type === 'tab') {
+                    synth.triggerAttackRelease('G4', '32n', now);
+                } else if (type === 'alarm') {
+                    synth.triggerAttackRelease('A4', '8n', now);
+                    synth.triggerAttackRelease('A4', '8n', now + 0.2);
+                    synth.triggerAttackRelease('A4', '4n', now + 0.4);
+                } else if (type === 'victory') {
+                    synth.triggerAttackRelease('C5', '8n', now);
+                    synth.triggerAttackRelease('E5', '8n', now + 0.12);
+                    synth.triggerAttackRelease('G5', '8n', now + 0.24);
+                    synth.triggerAttackRelease('C6', '4n', now + 0.36);
+                }
+            } catch (e) {}
+        }
+
+        /**
+         * --------------------------------------------------------------------
+         * 5. TOAST HELPER & UTILITIES
+         * --------------------------------------------------------------------
+         */
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const styles = {
+                info: 'bg-slate-800/95 border-amber-500/50 text-amber-200',
+                error: 'bg-rose-950/95 border-rose-500 text-rose-200',
+                success: 'bg-emerald-950/95 border-emerald-500 text-emerald-200'
+            };
+            const icons = { info: '💡', error: '⚠️', success: '✅' };
+            toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl border shadow-xl text-sm font-medium animate-fade-in ${styles[type] || styles.info}`;
+            toast.innerHTML = `<span class="text-lg">${icons[type] || '💡'}</span><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-8px)';
+                toast.style.transition = 'all 0.25s ease';
+                setTimeout(() => toast.remove(), 260);
+            }, 2800);
+        }
+
+        function formatTime(sec) {
+            const s = Math.max(0, sec);
+            const mins = Math.floor(s / 60);
+            const secs = s % 60;
+            return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function getSelectedItems() {
+            return ITEMS.filter(i => selectedIds.has(i.id));
+        }
+        function getCurrentWeight() {
+            return getSelectedItems().reduce((sum, i) => sum + i.weight, 0);
+        }
+        function getCurrentScore() {
+            return getSelectedItems().reduce((sum, i) => sum + i.score, 0);
+        }
+
+        function getTagBadgeHtml(tagType, tagLabel) {
+            const map = {
+                optimal: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50',
+                heavy_good: 'bg-sky-500/20 text-sky-300 border-sky-500/50',
+                moderate: 'bg-amber-500/20 text-amber-300 border-amber-500/50',
+                trap: 'bg-rose-500/20 text-rose-300 border-rose-500/50'
+            };
+            const dotMap = { optimal: '🟢', heavy_good: '🔵', moderate: '🟡', trap: '🔴' };
+            return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${map[tagType]}">${dotMap[tagType]} ${tagLabel}</span>`;
+        }
+
+        /**
+         * --------------------------------------------------------------------
+         * 6. SCREEN 1: SETUP LOGIC
+         * --------------------------------------------------------------------
+         */
+        function renderSetupSelectors() {
+            // Size buttons 2..8
+            const sizeGroup = document.getElementById('size-selector-group');
+            sizeGroup.innerHTML = '';
+            for (let n = 2; n <= 8; n++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                const active = teamConfig.size === n;
+                btn.className = `py-2 rounded-xl font-bold text-sm border transition cursor-pointer ${
+                    active ? 'bg-amber-500 text-slate-950 border-amber-300 shadow' : 'bg-slate-800 text-slate-300 border-slate-700 hover:border-amber-500/50'
+                }`;
+                btn.textContent = n;
+                btn.addEventListener('click', () => {
+                    teamConfig.size = n;
+                    document.getElementById('setup-size-label').textContent = `${n} คน`;
+                    renderSetupSelectors();
+                    renderMemberInputs();
+                });
+                sizeGroup.appendChild(btn);
+            }
+
+            // Time buttons
+            const timeOptions = [3, 5, 10, 15, 20];
+            const timeGroup = document.getElementById('time-selector-group');
+            timeGroup.innerHTML = '';
+            timeOptions.forEach(m => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                const active = teamConfig.minutes === m;
+                btn.className = `py-2 rounded-xl font-bold text-xs sm:text-sm border transition cursor-pointer ${
+                    active ? 'bg-sky-500 text-slate-950 border-sky-300 shadow' : 'bg-slate-800 text-slate-300 border-slate-700 hover:border-sky-500/50'
+                }`;
+                btn.textContent = `${m} น.`;
+                btn.addEventListener('click', () => {
+                    teamConfig.minutes = m;
+                    document.getElementById('setup-time-label').textContent = `${m} นาที`;
+                    renderSetupSelectors();
+                });
+                timeGroup.appendChild(btn);
+            });
+        }
+
+        function renderMemberInputs() {
+            const container = document.getElementById('member-inputs-list');
+            // Preserve existing edited names
+            const existingNames = [];
+            container.querySelectorAll('input').forEach(inp => existingNames.push(inp.value));
+
+            container.innerHTML = '';
+            for (let i = 0; i < teamConfig.size; i++) {
+                const avatar = MEMBER_AVATARS[i % MEMBER_AVATARS.length];
+                const defaultVal = existingNames[i] || `สมาชิกคนที่ ${i + 1}`;
+                const row = document.createElement('div');
+                row.className = 'flex items-center gap-2.5';
+                row.innerHTML = `
+                    <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-600 flex items-center justify-center text-xl shrink-0">${avatar}</div>
+                    <input type="text" data-member-idx="${i}" value="${defaultVal}" maxlength="24"
+                        class="flex-1 px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-600 focus:border-amber-400 focus:outline-none text-sm text-white font-medium"
+                        placeholder="ชื่อสมาชิกคนที่ ${i + 1}">
+                `;
+                container.appendChild(row);
+            }
+        }
+
+        function updateModeButtons() {
+            const btnHidden = document.getElementById('mode-btn-hidden');
+            const btnVisible = document.getElementById('mode-btn-visible');
+            if (teamConfig.hideScores) {
+                btnHidden.className = 'p-3 rounded-xl border-2 border-emerald-500 bg-emerald-500/15 text-left transition cursor-pointer';
+                btnVisible.className = 'p-3 rounded-xl border-2 border-slate-700 bg-slate-800/70 text-left transition cursor-pointer hover:border-slate-500';
+            } else {
+                btnVisible.className = 'p-3 rounded-xl border-2 border-amber-500 bg-amber-500/15 text-left transition cursor-pointer';
+                btnHidden.className = 'p-3 rounded-xl border-2 border-slate-700 bg-slate-800/70 text-left transition cursor-pointer hover:border-slate-500';
+            }
+        }
+
+        function startTeamMission() {
+            initAudio();
+            playSfx('consensus');
+
+            const nameVal = document.getElementById('input-team-name').value.trim();
+            teamConfig.name = nameVal || 'ทีมผู้รอดชีวิต';
+
+            // Collect members
+            teamConfig.members = [];
+            const inputs = document.querySelectorAll('#member-inputs-list input');
+            inputs.forEach((inp, idx) => {
+                teamConfig.members.push({
+                    id: `m_${idx}`,
+                    name: inp.value.trim() || `สมาชิกคนที่ ${idx + 1}`,
+                    avatar: MEMBER_AVATARS[idx % MEMBER_AVATARS.length]
+                });
+            });
+
+            // Reset game state
+            selectedIds.clear();
+            activeCategory = CATEGORIES[0].id;
+            teamMetrics = { approvedCount: 0, rejectedCount: 0, dissentEvents: 0 };
+            totalSeconds = teamConfig.minutes * 60;
+            remainingSeconds = totalSeconds;
+            timerPaused = false;
+
+            // Update HUD
+            document.getElementById('hud-team-name').textContent = teamConfig.name;
+            const modeBadge = document.getElementById('hud-mode-badge');
+            modeBadge.textContent = teamConfig.hideScores ? '🕵️ โหมดสมจริง (ซ่อนคะแนน)' : '📊 โหมดมาตรฐาน';
+            modeBadge.className = teamConfig.hideScores
+                ? 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                : 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40';
+
+            const membersStrip = document.getElementById('hud-members-strip');
+            membersStrip.innerHTML = teamConfig.members.map(m =>
+                `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-800/90 border border-slate-700 text-slate-200">${m.avatar} ${m.name}</span>`
+            ).join('');
+
+            // Reset Meeting Log
+            document.getElementById('meeting-log').innerHTML = `<div class="text-slate-400 italic">เริ่มการประชุมทีม "${teamConfig.name}" (${teamConfig.members.length} คน) — รอการเสนอสิ่งของ...</div>`;
+            updateMeetingStats();
+
+            // Switch Screens
+            document.getElementById('screen-setup').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+
+            renderCategoryTabs();
+            renderItemsGrid();
+            renderBackpack();
+            startTimer();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /**
+         * --------------------------------------------------------------------
+         * 7. TIMER ENGINE
+         * --------------------------------------------------------------------
+         */
+        function startTimer() {
+            clearInterval(timerInterval);
+            updateTimerUI();
+            timerInterval = setInterval(() => {
+                if (timerPaused) return;
+                remainingSeconds--;
+                updateTimerUI();
+                if (remainingSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    playSfx('alarm');
+                    closeVoteModal();
+                    const modal = document.getElementById('modal-timeup');
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
+            }, 1000);
+        }
+
+        function updateTimerUI() {
+            const display = document.getElementById('timer-display');
+            const box = document.getElementById('timer-box');
+            display.textContent = formatTime(remainingSeconds);
+
+            if (remainingSeconds <= 60 && remainingSeconds > 0) {
+                box.classList.add('timer-urgent');
+                display.classList.remove('text-amber-300');
+                display.classList.add('text-rose-300');
+            } else {
+                box.classList.remove('timer-urgent');
+                display.classList.add('text-amber-300');
+                display.classList.remove('text-rose-300');
+            }
+        }
+
+        /**
+         * --------------------------------------------------------------------
+         * 8. GAMEPLAY RENDERING (CATALOG, BACKPACK, LOG)
+         * --------------------------------------------------------------------
+         */
+        function renderCategoryTabs() {
+            const tabsEl = document.getElementById('category-tabs');
+            tabsEl.innerHTML = '';
+            CATEGORIES.forEach(cat => {
+                const countInCat = ITEMS.filter(i => i.category === cat.id).length;
+                const selectedInCat = ITEMS.filter(i => i.category === cat.id && selectedIds.has(i.id)).length;
+                const isActive = activeCategory === cat.id;
+
+                const btn = document.createElement('button');
+                btn.className = `tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 cursor-pointer ${isActive ? 'active' : 'text-slate-300'}`;
+                btn.innerHTML = `
+                    <span>${cat.icon}</span>
+                    <span>${cat.name}</span>
+                    <span class="text-xs opacity-75">(${countInCat})</span>
+                    ${selectedInCat > 0 ? `<span class="ml-0.5 w-5 h-5 rounded-full bg-emerald-500 text-slate-950 text-[11px] flex items-center justify-center font-extrabold">${selectedInCat}</span>` : ''}
+                `;
+                btn.addEventListener('click', () => {
+                    playSfx('tab');
+                    activeCategory = cat.id;
+                    renderCategoryTabs();
+                    renderItemsGrid();
+                });
+                tabsEl.appendChild(btn);
+            });
+        }
+
+        function renderItemsGrid() {
+            const gridEl = document.getElementById('items-grid');
+            gridEl.innerHTML = '';
+            const currentWeight = getCurrentWeight();
+            const filtered = ITEMS.filter(i => i.category === activeCategory);
+
+            filtered.forEach(item => {
+                const isSelected = selectedIds.has(item.id);
+                const wouldExceed = !isSelected && (currentWeight + item.weight > MAX_WEIGHT);
+
+                const card = document.createElement('div');
+                card.className = `item-card rounded-xl p-3.5 cursor-pointer flex items-center gap-3 relative select-none ${
+                    isSelected ? 'selected-card' : ''
+                } ${wouldExceed ? 'opacity-50' : ''}`;
+
+                const scoreHtml = teamConfig.hideScores
+                    ? `<span class="text-slate-400 flex items-center gap-1">🕵️ คะแนนซ่อนอยู่</span>`
+                    : `<span class="text-emerald-400 flex items-center gap-1">💚 ${item.score}</span>`;
+
+                card.innerHTML = `
+                    <div class="w-12 h-12 shrink-0 rounded-xl bg-slate-900/85 border border-slate-700/80 flex items-center justify-center text-2xl">
+                        ${item.icon}
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="font-bold text-sm text-white truncate pr-6" title="${item.name}">${item.name}</div>
+                        <div class="text-xs text-slate-400 truncate mt-0.5">${item.shortDesc}</div>
+                        <div class="flex items-center gap-3 mt-2 text-xs font-bold">
+                            <span class="text-amber-400 flex items-center gap-1">⚖️ ${item.weight}</span>
+                            ${scoreHtml}
+                        </div>
+                    </div>
+                    <div class="absolute top-2.5 right-2.5">
+                        ${isSelected
+                            ? `<span class="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 text-xs flex items-center justify-center font-extrabold shadow" title="ผ่านมติเอกฉันท์แล้ว">✓</span>`
+                            : `<span class="text-[11px] px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 border border-slate-600">โหวต</span>`
+                        }
+                    </div>
+                `;
+
+                card.addEventListener('click', () => {
+                    if (!isSelected && wouldExceed) {
+                        playSfx('error');
+                        const bar = document.getElementById('weight-bar-wrapper');
+                        bar.classList.remove('animate-shake');
+                        void bar.offsetWidth;
+                        bar.classList.add('animate-shake');
+                        showToast(`น้ำหนักเกินพิกัด! เหลือพื้นที่อีก ${MAX_WEIGHT - currentWeight} หน่วย (ชิ้นนี้หนัก ${item.weight} หน่วย)`, 'error');
+                        return;
+                    }
+                    openVoteModal(item, isSelected ? 'remove' : 'add');
+                });
+                gridEl.appendChild(card);
+            });
+        }
+
+        function renderBackpack() {
+            const selected = getSelectedItems();
+            const currentWeight = getCurrentWeight();
+            const remaining = MAX_WEIGHT - currentWeight;
+            const pct = Math.min(100, Math.round((currentWeight / MAX_WEIGHT) * 100));
+
+            document.getElementById('current-weight-text').textContent = currentWeight;
+            document.getElementById('remaining-weight-text').textContent = `${remaining} หน่วย`;
+            document.getElementById('pack-count-badge').textContent = `${selected.length} ชิ้น`;
+            document.getElementById('weight-progress-fill').style.width = `${pct}%`;
+
+            const badge = document.getElementById('weight-status-badge');
+            if (currentWeight === 0) {
+                badge.textContent = 'ยังว่างอยู่';
+                badge.className = 'text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-300';
+            } else if (currentWeight === MAX_WEIGHT) {
+                badge.textContent = 'เต็มพิกัด 50/50!';
+                badge.className = 'text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+            } else {
+                badge.textContent = 'กำลังบรรจุ';
+                badge.className = 'text-xs px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300';
+            }
+
+            const emptyEl = document.getElementById('backpack-empty');
+            const listEl = document.getElementById('backpack-list');
+
+            if (selected.length === 0) {
+                emptyEl.classList.remove('hidden');
+                listEl.classList.add('hidden');
+                listEl.innerHTML = '';
+            } else {
+                emptyEl.classList.add('hidden');
+                listEl.classList.remove('hidden');
+                listEl.classList.add('flex');
+                listEl.innerHTML = '';
+
+                selected.forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = 'flex items-center justify-between gap-2 bg-slate-800/85 border border-emerald-500/25 rounded-xl px-3 py-2';
+                    row.innerHTML = `
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="text-xl shrink-0">${item.icon}</span>
+                            <div class="min-w-0">
+                                <div class="text-sm font-semibold text-white truncate">${item.name}</div>
+                                <div class="text-xs flex items-center gap-2.5">
+                                    <span class="text-amber-400 font-semibold">⚖️ ${item.weight}</span>
+                                    ${!teamConfig.hideScores ? `<span class="text-emerald-400 font-semibold">💚 ${item.score}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <button class="shrink-0 px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/30 text-rose-300 text-xs font-semibold border border-rose-500/30 cursor-pointer">
+                            โหวตนำออก
+                        </button>
+                    `;
+                    row.querySelector('button').addEventListener('click', () => openVoteModal(item, 'remove'));
+                    listEl.appendChild(row);
+                });
+            }
+        }
+
+        function addMeetingLog(message, type = 'approved') {
+            const logEl = document.getElementById('meeting-log');
+            // Clear placeholder italic if first entry
+            if (logEl.querySelector('.italic')) logEl.innerHTML = '';
+
+            const timeStr = formatTime(totalSeconds - remainingSeconds);
+            const entry = document.createElement('div');
+            const colorClass = type === 'approved'
+                ? 'text-emerald-300 border-emerald-500/40 bg-emerald-500/10'
+                : type === 'removed'
+                    ? 'text-amber-300 border-amber-500/40 bg-amber-500/10'
+                    : 'text-rose-300 border-rose-500/40 bg-rose-500/10';
+
+            entry.className = `px-2.5 py-1.5 rounded-lg border-l-2 ${colorClass}`;
+            entry.innerHTML = `<span class="opacity-65 mr-1.5">[${timeStr}]</span>${message}`;
+            logEl.prepend(entry);
+            updateMeetingStats();
+        }
+
+        function updateMeetingStats() {
+            document.getElementById('stat-approved-count').textContent = teamMetrics.approvedCount;
+            document.getElementById('stat-rejected-count').textContent = teamMetrics.rejectedCount;
+        }
+
+        /**
+         * --------------------------------------------------------------------
+         * 9. UNANIMOUS CONSENSUS VOTING MODAL
+         * --------------------------------------------------------------------
+         */
+        function openVoteModal(item, action) {
+            playSfx('tab');
+            currentVote = {
+                item,
+                action,
+                votes: {}
+            };
+            teamConfig.members.forEach(m => { currentVote.votes[m.id] = null; });
+
+            // Populate Item Info
+            const actionBadge = document.getElementById('vote-action-badge');
+            const confirmText = document.getElementById('btn-confirm-text');
+            if (action === 'add') {
+                actionBadge.textContent = '🗳️ เสนอหยิบเข้ากระเป๋าเป้ (ต้องได้มติเอกฉันท์ 100%)';
+                actionBadge.className = 'inline-block text-xs font-bold px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-300 border border-orange-500/40 mb-1.5';
+                confirmText.textContent = 'ยืนยันมติเอกฉันท์: นำเข้ากระเป๋าเป้';
+            } else {
+                actionBadge.textContent = '🗳️ เสนอนำออกจากกระเป๋าเป้ (ต้องได้มติเอกฉันท์ 100%)';
+                actionBadge.className = 'inline-block text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 mb-1.5';
+                confirmText.textContent = 'ยืนยันมติเอกฉันท์: นำออกจากกระเป๋าเป้';
+            }
+
+            document.getElementById('vote-item-name').textContent = item.name;
+            document.getElementById('vote-item-icon').textContent = item.icon;
+            document.getElementById('vote-item-desc').textContent = item.shortDesc;
+            document.getElementById('vote-item-weight').textContent = item.weight;
+
+            const scoreWrap = document.getElementById('vote-item-score-wrap');
+            if (teamConfig.hideScores) {
+                scoreWrap.classList.add('hidden');
+            } else {
+                scoreWrap.classList.remove('hidden');
+                document.getElementById('vote-item-score').textContent = item.score;
+            }
+
+            const projected = action === 'add'
+                ? getCurrentWeight() + item.weight
+                : getCurrentWeight() - item.weight;
+            document.getElementById('vote-projected-weight').textContent = projected;
+
+            renderVoteMembers();
+
+            const modal = document.getElementById('modal-vote');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function renderVoteMembers() {
+            const grid = document.getElementById('vote-members-grid');
+            grid.innerHTML = '';
+
+            let agreeCount = 0;
+            let disagreeCount = 0;
+
+            teamConfig.members.forEach(member => {
+                const v = currentVote.votes[member.id];
+                if (v === 'agree') agreeCount++;
+                if (v === 'disagree') disagreeCount++;
+
+                const cardStyle = v === 'agree'
+                    ? 'border-emerald-500 bg-emerald-500/15'
+                    : v === 'disagree'
+                        ? 'border-rose-500 bg-rose-500/15'
+                        : 'border-slate-700 bg-slate-900/70';
+
+                const card = document.createElement('div');
+                card.className = `rounded-xl p-3 border-2 transition flex items-center justify-between gap-2 ${cardStyle}`;
+                card.innerHTML = `
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="text-2xl shrink-0">${member.avatar}</span>
+                        <span class="font-bold text-sm text-white truncate">${member.name}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button type="button" data-vote="agree" class="px-2.5 py-1.5 rounded-lg text-xs font-bold border transition cursor-pointer ${
+                            v === 'agree' ? 'bg-emerald-500 text-slate-950 border-emerald-300 shadow' : 'bg-slate-800 text-slate-300 border-slate-600 hover:border-emerald-400'
+                        }">👍 เห็นด้วย</button>
+                        <button type="button" data-vote="disagree" class="px-2.5 py-1.5 rounded-lg text-xs font-bold border transition cursor-pointer ${
+                            v === 'disagree' ? 'bg-rose-500 text-white border-rose-300 shadow' : 'bg-slate-800 text-slate-300 border-slate-600 hover:border-rose-400'
+                        }">👎 คัดค้าน</button>
+                    </div>
+                `;
+
+                card.querySelector('[data-vote="agree"]').addEventListener('click', () => {
+                    currentVote.votes[member.id] = 'agree';
+                    playSfx('vote_yes');
+                    renderVoteMembers();
+                });
+
+                card.querySelector('[data-vote="disagree"]').addEventListener('click', () => {
+                    if (currentVote.votes[member.id] !== 'disagree') {
+                        teamMetrics.dissentEvents++;
+                    }
+                    currentVote.votes[member.id] = 'disagree';
+                    playSfx('vote_no');
+                    renderVoteMembers();
+                });
+
+                grid.appendChild(card);
+            });
+
+            // Update Consensus Status Banner
+            const total = teamConfig.members.length;
+            const isUnanimous = agreeCount === total;
+            const statusBox = document.getElementById('vote-status-box');
+            const statusIcon = document.getElementById('vote-status-icon');
+            const statusText = document.getElementById('vote-status-text');
+            const tallyBadge = document.getElementById('vote-tally-badge');
+            const confirmBtn = document.getElementById('btn-confirm-consensus');
+
+            tallyBadge.textContent = `เห็นด้วย ${agreeCount} / ${total} คน`;
+
+            if (isUnanimous) {
+                statusBox.className = 'rounded-xl p-3.5 mb-4 border bg-emerald-950/75 border-emerald-500 flex flex-wrap items-center justify-between gap-2';
+                statusIcon.textContent = '🎉';
+                statusText.textContent = 'ได้มติเอกฉันท์ 100% แล้ว! สามารถกดยืนยันได้เลย';
+                statusText.className = 'text-emerald-300';
+                confirmBtn.disabled = false;
+            } else if (disagreeCount > 0) {
+                statusBox.className = 'rounded-xl p-3.5 mb-4 border bg-rose-950/65 border-rose-500/70 flex flex-wrap items-center justify-between gap-2';
+                statusIcon.textContent = '💬';
+                statusText.textContent = `มีเสียงคัดค้าน ${disagreeCount} คน! กรุณาอภิปรายแลกเปลี่ยนเหตุผลกันในทีมก่อน`;
+                statusText.className = 'text-rose-300';
+                confirmBtn.disabled = true;
+            } else {
+                statusBox.className = 'rounded-xl p-3.5 mb-4 border bg-slate-900/80 border-slate-700 flex flex-wrap items-center justify-between gap-2';
+                statusIcon.textContent = '⏳';
+                statusText.textContent = `รอสมาชิกอีก ${total - agreeCount} คนลงมติ (ต้องเห็นด้วยครบทุกคน)`;
+                statusText.className = 'text-amber-300';
+                confirmBtn.disabled = true;
+            }
+        }
+
+        function closeVoteModal() {
+            const modal = document.getElementById('modal-vote');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function confirmConsensus() {
+            const { item, action } = currentVote;
+            if (!item) return;
+
+            playSfx('consensus');
+            if (action === 'add') {
+                selectedIds.add(item.id);
+                teamMetrics.approvedCount++;
+                addMeetingLog(`✅ มติเอกฉันท์: นำ "${item.name}" เข้ากระเป๋าเป้`, 'approved');
+                showToast(`มติเอกฉันท์! บรรจุ "${item.name}" ลงกระเป๋าเรียบร้อย`, 'success');
+            } else {
+                selectedIds.delete(item.id);
+                teamMetrics.approvedCount++;
+                addMeetingLog(`🔄 มติเอกฉันท์: นำ "${item.name}" ออกจากกระเป๋าเป้`, 'removed');
+                showToast(`มติเอกฉันท์! นำ "${item.name}" ออกจากกระเป๋าแล้ว`, 'info');
+            }
+
+            closeVoteModal();
+            renderCategoryTabs();
+            renderItemsGrid();
+            renderBackpack();
+        }
+
+        function rejectProposal() {
+            const { item, action } = currentVote;
+            playSfx('vote_no');
+            if (item && action === 'add') {
+                teamMetrics.rejectedCount++;
+                addMeetingLog(`❌ ไม่ผ่านมติ (ปัดตก): "${item.name}"`, 'rejected');
+            }
+            closeVoteModal();
+        }
+
+        /**
+         * --------------------------------------------------------------------
+         * 10. RESULTS & TEAM DEBRIEF SCREEN
+         * --------------------------------------------------------------------
+         */
+        function finishMission() {
+            const selected = getSelectedItems();
+            if (selected.length === 0 && remainingSeconds > 0) {
+                playSfx('error');
+                showToast('กระเป๋าเป้ทีมยังว่างเปล่า! กรุณาโหวตเลือกสิ่งของอย่างน้อย 1 ชิ้นก่อนออกเดินทาง', 'error');
+                return;
+            }
+
+            clearInterval(timerInterval);
+            document.getElementById('modal-timeup').classList.add('hidden');
+            document.getElementById('modal-timeup').classList.remove('flex');
+            closeVoteModal();
+
+            const userWeight = getCurrentWeight();
+            const userScore = getCurrentScore();
+            const maxScore = optimalSolution.maxScore;
+            const ratioPct = Math.round((userScore / maxScore) * 100);
+            const usedSeconds = Math.max(1, totalSeconds - remainingSeconds);
+
+            let tier;
+            if (ratioPct >= 90) {
+                playSfx('victory');
+                tier = {
+                    emoji: '🏆',
+                    title: 'สุดยอดทีมในตำนาน พิชิตทะเลทราย 100%!',
+                    subtitle: `พลังการสื่อสารและมติเอกฉันท์ของ "${teamConfig.name}" ยอดเยี่ยมมาก! ทีมเลือกอุปกรณ์ที่คุ้มค่าที่สุด ทำให้ทุกคนรอดชีวิตและได้รับการช่วยเหลืออย่างรวดเร็ว`,
+                    borderClass: 'border-emerald-400/75 bg-gradient-to-br from-emerald-950/85 via-slate-900/90 to-teal-950/85',
+                    titleClass: 'text-emerald-300'
+                };
+            } else if (ratioPct >= 75) {
+                playSfx('victory');
+                tier = {
+                    emoji: '✅',
+                    title: 'ภารกิจสำเร็จ! ทีมรอดชีวิตกลับมาครบทุกคน',
+                    subtitle: `การระดมสมองของ "${teamConfig.name}" ทำได้ดีมาก แม้จะมีบางจุดที่ปรับให้คุ้มค่ากว่านี้ได้ แต่ทุกคนสามารถประคองตัวจนทีมกู้ภัยมาถึงได้สำเร็จ`,
+                    borderClass: 'border-sky-400/75 bg-gradient-to-br from-sky-950/85 via-slate-900/90 to-slate-900/90',
+                    titleClass: 'text-sky-300'
+                };
+            } else if (ratioPct >= 50) {
+                playSfx('vote_no');
+                tier = {
+                    emoji: '⚠️',
+                    title: 'รอดชีวิตหวุดหวิด แต่ทีมอ่อนล้าอย่างหนัก',
+                    subtitle: 'ทีมขาดอุปกรณ์สำคัญบางชิ้นหรือเผลอเห็นพ้องกับไอเทมกับดัก ลองใช้บทเรียนด้านล่างมาพูดคุยสะท้อนคิด (AAR) ร่วมกันในกลุ่มนะ!',
+                    borderClass: 'border-amber-400/75 bg-gradient-to-br from-amber-950/85 via-slate-900/90 to-orange-950/85',
+                    titleClass: 'text-amber-300'
+                };
+            } else {
+                playSfx('error');
+                tier = {
+                    emoji: '🌪️',
+                    title: 'ติดพายุทรายกลางทาง (ภารกิจล้มเหลว)',
+                    subtitle: 'อุปกรณ์ยังไม่เพียงพอต่อการเอาตัวรอดกลางทะเลทราย นี่คือโอกาสดีที่ทีมจะได้ทบทวนวิธีรับฟังเหตุผลและจัดลำดับความสำคัญร่วมกันใหม่!',
+                    borderClass: 'border-rose-500/75 bg-gradient-to-br from-rose-950/85 via-slate-900/90 to-slate-950/90',
+                    titleClass: 'text-rose-400'
+                };
+            }
+
+            // Populate Banner
+            const banner = document.getElementById('result-banner');
+            banner.className = `rounded-3xl p-6 sm:p-8 mb-5 border-2 text-center glass-panel ${tier.borderClass}`;
+            document.getElementById('result-team-pill').textContent = `🤝 ${teamConfig.name} • สมาชิก ${teamConfig.members.length} คน`;
+            document.getElementById('result-emoji').textContent = tier.emoji;
+            const titleEl = document.getElementById('result-title');
+            titleEl.textContent = tier.title;
+            titleEl.className = `text-2xl sm:text-4xl font-extrabold mb-2 ${tier.titleClass}`;
+            document.getElementById('result-subtitle').textContent = tier.subtitle;
+
+            // Populate KPIs
+            document.getElementById('res-score-val').textContent = userScore;
+            document.getElementById('res-optimal-val').textContent = maxScore;
+            document.getElementById('res-percent-text').textContent = `${ratioPct}% ของคะแนนสูงสุดที่เป็นไปได้`;
+            document.getElementById('res-weight-val').textContent = userWeight;
+            document.getElementById('res-weight-bar').style.width = `${Math.round((userWeight / MAX_WEIGHT) * 100)}%`;
+            document.getElementById('res-time-used').textContent = formatTime(usedSeconds);
+            document.getElementById('res-time-note').textContent = remainingSeconds > 0
+                ? `เหลือเวลาอีก ${formatTime(remainingSeconds)}`
+                : 'ใช้เวลาจนครบกำหนดพอดี';
+            document.getElementById('res-approved-stat').textContent = teamMetrics.approvedCount;
+            document.getElementById('res-rejected-stat').textContent = teamMetrics.rejectedCount;
+            document.getElementById('res-dissent-note').textContent = `มีการกดคัดค้านเพื่อถกเหตุผล ${teamMetrics.dissentEvents} ครั้ง`;
+
+            // Dynamic Team Analysis
+            const optimalPicked = selected.filter(i => i.tagType === 'optimal').length;
+            const trapsPicked = selected.filter(i => i.tagType === 'trap');
+            const unusedWeight = MAX_WEIGHT - userWeight;
+
+            let html = `<p>ทีม <strong>${teamConfig.name}</strong> บรรลุข้อตกลงมติเอกฉันท์เลือกของทั้งหมด <strong>${selected.length} ชิ้น</strong> (ของคุ้มค่ามาก <strong class="text-emerald-400">${optimalPicked} ชิ้น</strong>)</p>`;
+
+            if (trapsPicked.length > 0) {
+                html += `<p class="text-rose-300">⚠️ <strong>หลุมพรางความคิดกลุ่ม (Groupthink):</strong> ทีมตกลงเลือกไอเทมกับดักไปด้วย ${trapsPicked.length} ชิ้น ได้แก่ ${trapsPicked.map(t => `"${t.name}"`).join(', ')} ลองถามกันในทีมว่าตอนโหวตมีใครสงสัยแต่ไม่กล้าคัดค้านหรือไม่?</p>`;
+            } else {
+                html += `<p class="text-emerald-300">✅ <strong>คัดกรองเฉียบขาด!</strong> ทีมสามารถช่วยกันตรวจสอบและหลีกเลี่ยงไอเทมกับดักได้ครบทุกชิ้น</p>`;
+            }
+
+            if (teamMetrics.dissentEvents > 0 || teamMetrics.rejectedCount > 0) {
+                html += `<p class="text-purple-300">💬 <strong>การสื่อสารสร้างสรรค์:</strong> ในกลุ่มมีการคัดค้าน (${teamMetrics.dissentEvents} ครั้ง) และปัดตกข้อเสนอ (${teamMetrics.rejectedCount} ชิ้น) แสดงถึงบรรยากาศที่ทุกคนกล้าแสดงความเห็นต่างอย่างปลอดภัย (Psychological Safety)</p>`;
+            } else {
+                html += `<p class="text-amber-300">💡 <strong>ข้อสังเกตกระบวนการกลุ่ม:</strong> ตลอดเกมไม่มีการกดคัดค้านเลย ถือว่าทีมเห็นพ้องกันเร็วมาก แต่อย่าลืมเปิดพื้นที่ให้คนที่เงียบที่สุดในกลุ่มได้ออกความเห็นด้วยนะ!</p>`;
+            }
+
+            if (unusedWeight >= 4) {
+                html += `<p class="text-sky-300">🎒 <strong>พื้นที่เหลือ:</strong> กระเป๋ายังว่างอีก ${unusedWeight} หน่วย สามารถใส่ของเบาแต่มีประโยชน์สูงอย่าง กระจกเงา หรือ นกหวีด เพิ่มได้</p>`;
+            }
+
+            document.getElementById('res-analysis-text').innerHTML = html;
+
+            renderResultItemList('team');
+
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderResultItemList(mode) {
+            const listEl = document.getElementById('res-items-list');
+            const captionEl = document.getElementById('res-list-caption');
+            const btnTeam = document.getElementById('tab-res-team');
+            const btnOpt = document.getElementById('tab-res-optimal');
+
+            let itemsToShow = [];
+            if (mode === 'team') {
+                btnTeam.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-amber-600 text-white transition cursor-pointer';
+                btnOpt.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition cursor-pointer';
+                captionEl.innerHTML = 'แสดงสิ่งของที่ผ่านมติเอกฉันท์ของทีม พร้อมเหตุผลทางวิทยาศาสตร์และคำสอนรายชิ้น';
+                itemsToShow = getSelectedItems().sort((a, b) => (b.score / b.weight) - (a.score / a.weight));
+            } else {
+                btnOpt.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-emerald-600 text-white transition cursor-pointer';
+                btnTeam.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition cursor-pointer';
+                captionEl.innerHTML = `🏆 <strong>เฉลยชุดคะแนนสูงสุด (${optimalSolution.maxScore} คะแนน / น้ำหนัก ${optimalSolution.totalWeight}/${MAX_WEIGHT} หน่วย)</strong> คำนวณด้วยอัลกอริทึม Dynamic Programming`;
+                itemsToShow = optimalSolution.items;
+            }
+
+            listEl.innerHTML = '';
+            if (itemsToShow.length === 0) {
+                listEl.innerHTML = `<div class="text-center text-slate-400 py-8">ทีมยังไม่ได้เลือกสิ่งของใดๆ ใส่กระเป๋า</div>`;
+                return;
+            }
+
+            itemsToShow.forEach(item => {
+                const ratio = (item.score / item.weight).toFixed(2);
+                const pickedByTeam = selectedIds.has(item.id);
+                const card = document.createElement('div');
+                card.className = 'bg-slate-900/75 border border-slate-700/70 rounded-xl p-4';
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-xl shrink-0">${item.icon}</div>
+                            <div>
+                                <div class="font-bold text-white text-sm sm:text-base flex items-center gap-2 flex-wrap">
+                                    <span>${item.name}</span>
+                                    ${mode === 'optimal' && pickedByTeam ? '<span class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">ทีมเลือกชิ้นนี้แล้ว</span>' : ''}
+                                </div>
+                                <div class="flex items-center gap-3 text-xs mt-0.5 font-semibold">
+                                    <span class="text-amber-400">⚖️ น้ำหนัก ${item.weight}</span>
+                                    <span class="text-emerald-400">💚 คะแนน ${item.score}</span>
+                                    <span class="text-slate-400">📊 ${ratio} แต้ม/หน่วย</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>${getTagBadgeHtml(item.tagType, item.tagLabel)}</div>
+                    </div>
+                    <div class="text-xs sm:text-sm text-slate-300 bg-slate-800/60 rounded-lg p-3 border-l-2 border-amber-400/70 leading-relaxed">
+                        <strong class="text-amber-300">เกร็ดความรู้:</strong> ${item.lesson}
+                    </div>
+                `;
+                listEl.appendChild(card);
+            });
+        }
+
+        /**
+         * --------------------------------------------------------------------
+         * 11. INITIALIZATION & EVENT BINDINGS
+         * --------------------------------------------------------------------
+         */
+        window.onload = function () {
+            optimalSolution = solveOptimalKnapsack(ITEMS, MAX_WEIGHT);
+
+            renderSetupSelectors();
+            renderMemberInputs();
+            updateModeButtons();
+
+            // Mode Toggles
+            document.getElementById('mode-btn-hidden').addEventListener('click', () => {
+                teamConfig.hideScores = true;
+                updateModeButtons();
+            });
+            document.getElementById('mode-btn-visible').addEventListener('click', () => {
+                teamConfig.hideScores = false;
+                updateModeButtons();
+            });
+
+            // Start Team Game
+            document.getElementById('btn-launch-team').addEventListener('click', startTeamMission);
+
+            // Timer Controls
+            document.getElementById('btn-timer-toggle').addEventListener('click', () => {
+                timerPaused = !timerPaused;
+                document.getElementById('btn-timer-toggle').textContent = timerPaused ? '▶️ ต่อ' : '⏸️ พัก';
+                showToast(timerPaused ? 'หยุดเวลาชั่วคราวแล้ว' : 'เดินเวลาต่อแล้ว!', 'info');
+            });
+
+            document.getElementById('btn-timer-add').addEventListener('click', () => {
+                remainingSeconds += 60;
+                totalSeconds += 60;
+                updateTimerUI();
+                playSfx('tab');
+                showToast('เพิ่มเวลาให้ทีมอีก +1 นาที', 'info');
+            });
+
+            // Sound Toggle
+            document.getElementById('btn-sound-toggle').addEventListener('click', () => {
+                soundEnabled = !soundEnabled;
+                document.getElementById('sound-icon').textContent = soundEnabled ? '🔊' : '🔇';
+                if (soundEnabled) initAudio();
+            });
+
+            // Voting Modal Buttons
+            document.getElementById('btn-close-vote').addEventListener('click', closeVoteModal);
+            document.getElementById('btn-reject-proposal').addEventListener('click', rejectProposal);
+            document.getElementById('btn-confirm-consensus').addEventListener('click', confirmConsensus);
+            document.getElementById('btn-vote-all-agree').addEventListener('click', () => {
+                teamConfig.members.forEach(m => { currentVote.votes[m.id] = 'agree'; });
+                playSfx('consensus');
+                renderVoteMembers();
+            });
+
+            // Submit Mission
+            document.getElementById('btn-submit-team').addEventListener('click', finishMission);
+
+            // Time-Up Modal Buttons
+            document.getElementById('btn-timeup-submit').addEventListener('click', finishMission);
+            document.getElementById('btn-timeup-extend').addEventListener('click', () => {
+                remainingSeconds = 120;
+                totalSeconds += 120;
+                const modal = document.getElementById('modal-timeup');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                startTimer();
+                showToast('วิทยากรต่อเวลาฉุกเฉินให้ +2 นาที!', 'info');
+            });
+
+            // Debrief Tabs
+            document.getElementById('tab-res-team').addEventListener('click', () => {
+                playSfx('tab');
+                renderResultItemList('team');
+            });
+            document.getElementById('tab-res-optimal').addEventListener('click', () => {
+                playSfx('tab');
+                renderResultItemList('optimal');
+            });
+
+            // Replay Buttons
+            document.getElementById('btn-replay-same').addEventListener('click', startTeamMission);
+            document.getElementById('btn-back-setup').addEventListener('click', () => {
+                clearInterval(timerInterval);
+                document.getElementById('screen-result').classList.add('hidden');
+                document.getElementById('screen-game').classList.add('hidden');
+                document.getElementById('screen-setup').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        };
+    </script>
+</body>
+</html>
